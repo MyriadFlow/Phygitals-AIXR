@@ -1,0 +1,46 @@
+{
+  "name": "Shachindra's Special Cap",
+  "description": "Urban Web3 Club",
+  "image": "ipfs://QmP9ayW28pbW2V9nYAjEbxv45MTezQpz8S913VbV56nkCg/1000.png",
+  "external_url": "https://urbanweb3.com/shachindra/1",
+  "attributes": [
+    {
+      "trait_type": "Material",
+      "value": "Carbon Fiber"
+    },
+    {
+      "trait_type": "Dimensions",
+      "value": "5ft x 2ft"
+    },
+    {
+      "trait_type": "Manufacturer",
+      "value": "Fender"
+    },
+    {
+      "trait_type": "Digital ID",
+      "value": "12345-ABCDE"
+    },
+    {
+      "trait_type": "Storage Location",
+      "value": "ipfs://xyz"
+    },
+    {
+      "display_type": "number",
+      "trait_type": "Serial Number",
+      "value": "SN1234567890"
+    },
+    {
+      "trait_type": "Product Type",
+      "value": "Guitar"
+    },
+    {
+      "trait_type": "Year of Production",
+      "value": "2023"
+    },
+    {
+      "display_type": "number",
+      "trait_type": "Weight",
+      "value": "6.5"
+    }
+  ]
+}
