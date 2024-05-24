@@ -3,14 +3,13 @@ import { cookieStorage, createStorage } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 
 export const projectId = `${process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID}`
-console.log(projectId)
 
 if (!projectId) throw new Error('Project ID is not defined')
 
 const metadata = {
   name: 'nero',
   description: 'Web3Modal Example',
-  url: 'https://localhost:3000',
+  url: 'https://nero-marketplace.vercel.app/',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
 };
 
