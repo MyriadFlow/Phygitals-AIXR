@@ -1,13 +1,10 @@
-"use client"
-
-function ConnectWallet() {
-  return <w3m-button/>; ;
-}
+"use client";
+import Hero from "./ui/Hero";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24 bg-background-light dark:bg-background-dark text-primary-dark dark:text-primary-light">
-      <ConnectWallet />
+    <div className="bg-gradient-radial from-accent to-secondary flex min-h-screen flex-col items-center justify-between bg-background-light dark:bg-background-dark text-primary-dark dark:text-primary-light">
+      <Hero />
     </div>
   );
 }
