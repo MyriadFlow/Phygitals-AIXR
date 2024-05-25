@@ -9,6 +9,8 @@ import MetadataPanel from '@/components/metadata/MetadataPanel';
 import KnowledgePanel from '@/components/knowledge/KnowledgePanel';
 import RAGPanel from '@/components/rag/RAGPanel';
 import NFTProvider from '@/lib/context/NFTProvider';
+import ConnectNextButton from '@/components/connect/ConnectNextButton';
+import TokenPanel from '@/components/token/TokenPanel';
 
 export default function App() {
 
@@ -16,15 +18,18 @@ export default function App() {
 
   const component = useMemo(() => {
     if (step === 0) {
-      return <ModelPanel />
+      return <TokenPanel />
     }
     else if (step === 1) {
-      return <MetadataPanel />
+      return <ModelPanel />
     }
     else if (step === 2) {
-      return <KnowledgePanel />
+      return <MetadataPanel />
     }
     else if (step === 3) {
+      return <KnowledgePanel />
+    }
+    else if (step === 4) {
       return <RAGPanel />
     }
   }, [step]);
@@ -36,6 +41,9 @@ export default function App() {
           <Typography variant='h3' component='h2'>Mint NERO Promotional NFT</Typography>
           <Stepper nonLinear activeStep={step}>
             <Step completed={false}>
+              <StepButton color="inherit">Token Details</StepButton>
+            </Step>
+            <Step completed={false}>
               <StepButton color="inherit">Model and Background</StepButton>
             </Step>
             <Step completed={false}>
@@ -44,9 +52,9 @@ export default function App() {
             <Step completed={false}>
               <StepButton color="inherit">GPT Knowledge base</StepButton>
             </Step>
-            <Step completed={false}>
+            {/* <Step completed={false}>
               <StepButton color="inherit">RAG Datasource</StepButton>
-            </Step>
+            </Step> */}
             <Step completed={false}>
               <StepButton color="inherit">Review</StepButton>
             </Step>
@@ -59,6 +67,10 @@ export default function App() {
           <Paper className='p-8'>
             {component}
           </Paper>
+          <div>
+            <Button disabled={step === 0} onClick={() => setStep(step - 1)}>Back</Button>
+            <ConnectNextButton disabled={false} onClick={() => {setStep(step + 1)}} />
+          </div>
         </Box>
       </Container>
     </NFTProvider>

@@ -3,7 +3,8 @@ import useUpload from "./useUpload"
 
 type MediaUploadPanelProps = {
   name: string,
-  accepts: string
+  accepts: string,
+  fileSelected: (file:File) => void;
 }
 
 export default function MediaUploadPanel(props: MediaUploadPanelProps) {

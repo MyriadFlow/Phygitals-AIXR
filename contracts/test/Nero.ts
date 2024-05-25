@@ -7,7 +7,7 @@ describe("Nero", function () {
   beforeEach(async function () {
     Nero = await ethers.getContractFactory("Nero");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
-    nero = await Nero.deploy(100, addr1.address); // maxSupply of 100
+    nero = await Nero.deploy("Nero", "Nero Dsec", 100, addr1.address); // maxSupply of 100
     await nero.deployed();
     minterRole = await nero.MINTER_ROLE();
   });

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { checkAndSignAuthMessage } from '@lit-protocol/lit-node-client';
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { AuthSig } from '@lit-protocol/types';
+import { LitNetwork } from "@lit-protocol/constants";
 
 export default function useLitLibrary() {
   const [client, setClient] = useState<LitJsSdk.LitNodeClient>();
@@ -29,7 +30,7 @@ export default function useLitLibrary() {
     // Initialize LitNodeClient
     const litNodeClient = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: false,
-      litNetwork: "cayenne",
+      litNetwork: LitNetwork.Cayenne,
     });
     await litNodeClient.connect();
     setClient(litNodeClient);
@@ -126,6 +127,8 @@ export default function useLitLibrary() {
     // getFile(decrypted!);
     // // getBase64(decrypted)
     setAuthSig(authSig);
+
+    return authSig;
   }
 
   useEffect(() => {

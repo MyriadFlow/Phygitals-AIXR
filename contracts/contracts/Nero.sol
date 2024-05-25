@@ -10,18 +10,22 @@ contract Nero is ERC721A, Ownable, AccessControl {
     mapping(uint256 => uint256) public scoreboard; // mapping between the NFT and the number of visits
     bool public locked = false;
     uint256 public maxSupply;
-    string public unlockedGlbURI;
-    string public unlockedBackgroundURI;
+    string public unlockedGlbURI; // unlocked avatar - token holder access only
+    string public unlockedBackgroundURI; // unlocked background - token holder access only
 
-    string public lockedGlbURI;
-    string public lockedBackgroundURI;
+    string public lockedGlbURI; // locked avatar - public access
+    string public lockedBackgroundURI; // locked backround - public access
+
+    string public tokenURILink; // single token URI
 
     uint256 public danceMove;
 
     constructor(
+        string memory name,
+        string memory description,
         uint256 supply,
         address nero
-    ) ERC721A("Nero", "NERO") Ownable(msg.sender) {
+    ) ERC721A(name, description) Ownable(msg.sender) {
         maxSupply = supply;
         _grantRole(MINTER_ROLE, nero);
     }
@@ -116,6 +120,10 @@ contract Nero is ERC721A, Ownable, AccessControl {
         unlockedBackgroundURI = _unlockedBackgroundURI;
         unlockedGlbURI = _unlockedGlbURI;
     }
+
+    // Sneaker animations: 1-F_Dances_001, 2-005, 3-006, 4-007 & 
+    // Guitar Animations: 5-M_Dances_005, 6-008, 7-009 & 8-F_Dances_007
+    // if not these no dancing
 
     function updateDanceMove(uint256 move) public onlyOwner {
         danceMove = move;

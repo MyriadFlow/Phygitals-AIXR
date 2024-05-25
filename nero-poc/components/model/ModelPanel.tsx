@@ -1,7 +1,11 @@
 import { Box, Grid, Typography } from "@mui/material";
 import MediaUploadPanel from "./MediaUploadPanel";
+import { useContext } from "react";
+import NFTContext from "@/lib/context/NFTContext";
 
 export default function ModelPanel() {
+  const context = useContext(NFTContext);
+
   return <div className="flex flex-col gap-4">
     <Typography variant="h6">
       Upload your Avatar image. You can choose locked and unlocked NFTs
@@ -15,10 +19,10 @@ export default function ModelPanel() {
       </Typography>
       <Grid container>
         <Grid item xs={6}>
-          <MediaUploadPanel name="Upload Avatar" accepts=".glb" />
+          <MediaUploadPanel name="Upload Avatar" accepts=".glb" fileSelected={context.setAvatar}/>
         </Grid>
         <Grid item xs={6}>
-          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png" />
+          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png" fileSelected={context.setBackground}/>
         </Grid>
       </Grid>
     </Box>
@@ -31,10 +35,10 @@ export default function ModelPanel() {
       </Typography>
       <Grid container>
         <Grid item xs={6}>
-          <MediaUploadPanel name="Upload Avatar" accepts=".glb" />
+          <MediaUploadPanel name="Upload Avatar" accepts=".glb" fileSelected={context.setUnlockedAvatar}/>
         </Grid>
         <Grid item xs={6}>
-          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png" />
+          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png" fileSelected={context.setUnlockedBackground}/>
         </Grid>
       </Grid>
     </Box>

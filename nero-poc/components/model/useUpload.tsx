@@ -1,8 +1,8 @@
-import useLitLibrary from "@/lib/hooks/useLitLibrary";
 import { Button, Typography, styled } from "@mui/material";
-import { useMemo, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Image from "next/image";
+import NFTContext from "@/lib/context/NFTContext";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -18,16 +18,21 @@ const VisuallyHiddenInput = styled('input')({
 
 type UseUploadProps = {
   accepts: string;
+  shouldEncrypt?: boolean;
+  fileSelected: (file:File) => void;
 }
 
 export default function useUpload(props: UseUploadProps) {
   const [file, setFile] = useState<any>('');
   const [imageFile, setImageFile] = useState('');
   const [fileType, setFileType] = useState('');
-  const [isConnected, setConnected] = useState(false);
-  const { connect, decryptData, encryptData, encryptFile } = useLitLibrary();
-
+  // const { connect, decryptData, encryptData, encryptFile } = useLitLibrary();
+  const ctx = useContext(NFTContext);
+  console.log(ctx);
   function getBase64(file: any) {
+    if (!file) {
+      return;
+    }
     setFileType(file.type);
     var reader = new FileReader();
     reader.readAsDataURL(file);
@@ -39,7 +44,8 @@ export default function useUpload(props: UseUploadProps) {
       console.log('Error: ', error);
     };
 
-    setFile(file)
+    setFile(file);
+    props.fileSelected(file);
   }
 
 
