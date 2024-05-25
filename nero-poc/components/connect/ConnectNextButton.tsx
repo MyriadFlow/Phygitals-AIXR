@@ -30,5 +30,5 @@ export default function ConnectNextButton(props: ConnectNextButtonProps) {
 
   console.log(loading);
 
-  return <Button variant='contained' onClick={handleButtonClicked} disabled={props.disabled || loading}>{loading && <CircularProgress size="1rem" className="text-white"/>}{connected?'Next': 'Sign In'}</Button>
+  return <Button variant='contained' onClick={handleButtonClicked} disabled={connected && (props.disabled || loading)}>{loading && <CircularProgress size="1rem" className="text-white"/>}{connected?'Next': 'Sign In'}</Button>
 }

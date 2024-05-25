@@ -24,7 +24,7 @@ contract Nero is ERC721A, Ownable, AccessControl {
         string memory name,
         string memory description,
         uint256 supply,
-        address nero
+        address nero // our public key so we can auto-update scoreboard
     ) ERC721A(name, description) Ownable(msg.sender) {
         maxSupply = supply;
         _grantRole(MINTER_ROLE, nero);

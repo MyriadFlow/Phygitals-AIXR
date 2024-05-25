@@ -1,5 +1,5 @@
 import { Button, Typography, styled } from "@mui/material";
-import { useContext, useMemo, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Image from "next/image";
 import NFTContext from "@/lib/context/NFTContext";
@@ -20,10 +20,11 @@ type UseUploadProps = {
   accepts: string;
   shouldEncrypt?: boolean;
   fileSelected: (file:File) => void;
+  file?: File;
 }
 
 export default function useUpload(props: UseUploadProps) {
-  const [file, setFile] = useState<any>('');
+  const [file, setFile] = useState<any>(props.file);
   const [imageFile, setImageFile] = useState('');
   const [fileType, setFileType] = useState('');
   // const { connect, decryptData, encryptData, encryptFile } = useLitLibrary();
@@ -47,7 +48,6 @@ export default function useUpload(props: UseUploadProps) {
     setFile(file);
     props.fileSelected(file);
   }
-
 
   function getFile(raw: any) {
 
@@ -103,6 +103,12 @@ export default function useUpload(props: UseUploadProps) {
   const RenderImage = useMemo(() => {
     return <div className="shadow-md">{renderImage()}</div>
   }, [imageFile]);
+
+  useEffect(() => {
+    if (props.file) {
+      getBase64(props.file);
+    }
+  }, [props.file])
 
   return {
     RenderButton,

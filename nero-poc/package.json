@@ -14,6 +14,7 @@
     "@lit-protocol/lit-node-client": "^5.1.0",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
+    "@mui/x-data-grid": "^6.20.0",
     "@react-three/drei": "^9.105.6",
     "@react-three/fiber": "^8.16.6",
     "@types/three": "^0.164.1",
