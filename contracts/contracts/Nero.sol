@@ -18,16 +18,35 @@ contract Nero is ERC721A, Ownable, AccessControl {
 
     string public tokenURILink; // single token URI
 
-    uint256 public danceMove;
+    string public publicKnowledgeLink; // link to public knowledge configuration for agent
+
+    string public privateKnowledgeLink; // link to private knowledge configuration for token-gated content
+
+    uint256 public pricePerTokenMint;
+
+    uint256 public bronzeTierUnlock = 10; // 10 people visit, unlock dance move 1
+    uint256 public silverTierUnlock = 100; // 100 people visit, unlock dance move 2
+    uint256 public goldTierUnlock = 200; // 200 people visit, unlock dance move 3
 
     constructor(
         string memory name,
         string memory description,
         uint256 supply,
-        address nero // our public key so we can auto-update scoreboard
+        uint256 price, // price to be paid for nft
+        address nero, // our public key so we can auto-update scoreboard
+        uint256 bronzeLevel,
+        uint256 silverLevel,
+        uint256 goldLevel
     ) ERC721A(name, description) Ownable(msg.sender) {
         maxSupply = supply;
         _grantRole(MINTER_ROLE, nero);
+        pricePerTokenMint = price;
+
+        require(bronzeLevel > 0 && silverLevel > bronzeLevel && goldLevel > silverLevel, 'invalid level configuration');
+
+        bronzeTierUnlock = bronzeLevel;
+        silverTierUnlock = silverLevel;
+        goldTierUnlock = goldLevel;
     }
 
     modifier unlocked() {
@@ -57,6 +76,7 @@ contract Nero is ERC721A, Ownable, AccessControl {
             _totalMinted() + quantity <= maxSupply && maxSupply > 0,
             "cannot mint more than max supply"
         );
+        require(msg.value == pricePerTokenMint * quantity, "please pay required amount to mint");
         // `_mint`'s second argument now takes in a `quantity`, not a `tokenId`.
         _mint(msg.sender, quantity);
     }
@@ -113,20 +133,36 @@ contract Nero is ERC721A, Ownable, AccessControl {
         string memory _unlockedGlbURI,
         string memory _unlockedBackgroundURI,
         string memory _lockedGlbURI,
-        string memory _lockedBackgroundURI
+        string memory _lockedBackgroundURI,
+        string memory _publicKnowlege,
+        string memory _privateKnowledge
     ) public onlyOwner unlocked {
         lockedBackgroundURI = _lockedBackgroundURI;
         lockedGlbURI = _lockedGlbURI;
         unlockedBackgroundURI = _unlockedBackgroundURI;
         unlockedGlbURI = _unlockedGlbURI;
+        publicKnowledgeLink = _publicKnowlege;
+        privateKnowledgeLink = _privateKnowledge;
     }
 
     // Sneaker animations: 1-F_Dances_001, 2-005, 3-006, 4-007 & 
     // Guitar Animations: 5-M_Dances_005, 6-008, 7-009 & 8-F_Dances_007
     // if not these no dancing
 
-    function updateDanceMove(uint256 move) public onlyOwner {
-        danceMove = move;
+    function getDanceMove(uint256 tokenId) public view returns(uint256) {
+        require(_exists(tokenId), 'token does not exist');
+
+        if (scoreboard[tokenId] < bronzeTierUnlock) {
+            return 0; // normal
+        }
+        if (scoreboard[tokenId] < silverTierUnlock) {
+            return 1; // bronze tier
+        }
+        if (scoreboard[tokenId] < goldTierUnlock) {
+            return 2; // silver tier
+        }
+
+        return 3; // gold tier
     }
 
     /// Interface overrides

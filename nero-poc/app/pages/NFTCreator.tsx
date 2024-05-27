@@ -33,6 +33,8 @@ export default function NFTCreator() {
     }
   }, [step]);
 
+  console.log('refresh')
+
   return <Container maxWidth="lg">
     <Box gap={3} display={"flex"} sx={{ flexDirection: "column" }}>
       <Typography variant='h3' component='h2'>Mint NERO Promotional NFT</Typography>

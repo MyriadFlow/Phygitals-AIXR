@@ -27,10 +27,12 @@ export default function useLitLibrary() {
   }
 
   async function getLitNodeClient() {
+    console.log('get client');
     // Initialize LitNodeClient
     const litNodeClient = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: false,
       litNetwork: LitNetwork.Cayenne,
+      debug: true
     });
     await litNodeClient.connect();
     setClient(litNodeClient);
@@ -131,9 +133,9 @@ export default function useLitLibrary() {
     return authSig;
   }
 
-  useEffect(() => {
-    getLitNodeClient();
-  }, []);
+  // useEffect(() => {
+  //   getLitNodeClient();
+  // }, []);
 
   return {
     connect,
