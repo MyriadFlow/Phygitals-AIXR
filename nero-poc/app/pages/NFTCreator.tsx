@@ -16,11 +16,22 @@ export default function NFTCreator() {
   const [step, setStep] = useState(0);
   const context = useContext(NFTContext);
 
+  const [minting, setMinting] = useState(false);
   const [message, setMessage] = useState('');
+
+  const [contractAddress, setContractAddress] = useState('');
 
   function appendMessage(msg: string) {
     console.log(msg);
     setMessage((prev) => prev + '\n' + msg);
+  }
+
+  async function mintNFT() {
+    setMessage(() => '');
+    setMinting(true);
+    const result = await context.exportMetadata(appendMessage);
+    setContractAddress(result);
+    setMinting(false);
   }
 
   const component = useMemo(() => {
@@ -75,10 +86,8 @@ export default function NFTCreator() {
       <div className='flex flex-row gap-2 justify-items-end'>
         <Button disabled={step === 0} onClick={() => setStep(step - 1)}>Back</Button>
         {step < 4 && <ConnectNextButton disabled={!context.stepValid(step)} onClick={() => { setStep(step + 1) }} />}
-        {step === 4 && <Button variant='contained' color='error' disabled={!context.stepsValid()} onClick={() => {
-          setMessage(() => '');
-          context.exportMetadata(appendMessage);
-        }}>Mint NFT</Button>}
+        {step === 4 && contractAddress.length === 0 && <Button variant='contained' color='error' disabled={!context.stepsValid() || minting} onClick={mintNFT}>{minting ? "Minting ..." : "Mint NFT"}</Button>}
+        {step === 4 && contractAddress.length > 0 && <Button variant='contained' color='success' disabled={!context.stepsValid() || minting} onClick={() => window.open('https://sepolia.etherscan.io/address/' + contractAddress)}>View NFT</Button>}
         <div className='flex-1'><w3m-button/></div>
 
       </div>

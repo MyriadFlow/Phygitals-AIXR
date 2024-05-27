@@ -112,18 +112,25 @@ const NFTProvider = ({ children }: any) => {
         update('3.1.1. Private knowledge encrypted and uploaded to file ' + json.knowledge.private);
       }
 
+      if (publicAgentKnowledge.length > 0) {
+
+        update('3.1.2. Uploading Public Agent Knowledge');
+        json.knowledge.public = await uploadBlob(publicAgentKnowledge);
+        update('3.1.2. Public knowledge uploaded to file ' + json.knowledge.public);
+      }
+
       if (unlockedAvatar) {
-        update('3.1.2. Encrypting Private Agent Avatar');
+        update('3.2.1. Encrypting Private Agent Avatar');
         const [ciphertext, dataToEncryptHash] = (await encryptFile(unlockedAvatar, contractAddress!))
         json.avatar.unlocked = await uploadPrivateData(ciphertext, dataToEncryptHash)
-        update('3.1.2. Private avatar encrypted and uploaded to file ' + json.avatar.unlocked);
+        update('3.2.1. Private avatar encrypted and uploaded to file ' + json.avatar.unlocked);
       }
 
       if (unlockedBackground) {
-        update('3.1.3. Encrypting Private Agent Background');
+        update('3.2.2. Encrypting Private Agent Background');
         const [ciphertext, dataToEncryptHash] = (await (encryptFile(unlockedBackground, contractAddress!)))
         json.avatar.unlockedBackground = await uploadPrivateData(ciphertext, dataToEncryptHash)
-        update('3.1.3. Private avatar background encrypted and uploaded to file ' + json.avatar.unlockedBackground);
+        update('3.2.2. Private avatar background encrypted and uploaded to file ' + json.avatar.unlockedBackground);
       }
 
       // upload metadata
@@ -133,7 +140,12 @@ const NFTProvider = ({ children }: any) => {
 
       update('5. updating all uri into smart contract and locking smart contract');
 
+      const result = await updateContractMetadata(contractAddress!, avatarURI, backgroundURI, json.avatar.locked, json.avatar.lockedBackground, json.knowledge.public, json.knowledge.private, metadataURI);
+      
+      update('5.1. metadata updated with txn hash ' + result);
+      update(' -- CONGRATS! YOUR NFT IS UPDATED --');
 
+      return contractAddress!;
     }
     catch (exception) {
       update('FAILED: error was ' + exception);
