@@ -1,17 +1,16 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import nero from "../artifacts/contracts/Nero.sol/Nero.json";
 import { useAccount, useChainId, useWalletClient } from "wagmi";
-import NFTContext from "../context/NFTContext";
 import { Hex } from "viem";
 export default function useDeployContract() {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
-  const context = useContext(NFTContext);
+  // const context = useContext(NFTContext);
   const { data: walletClient } = useWalletClient({ chainId });
 
   const [tokenAddress, setTokenAddress] = useState<Hex | undefined>();
 
-  async function deploy721A() {
+  async function deploy721A(name: string, symbol: string, totalSupply: number, tokenPrice: number, bronzeLevel: number, silverLevel: number, goldLevel: number) {
     console.log(walletClient);
     // verify and then deploy
     // deploy the smart contract using the args
@@ -28,7 +27,7 @@ export default function useDeployContract() {
       abi: nero.abi,
       bytecode: nero.bytecode as Hex,
       account: address,
-      args: [context.name, context.symbol, context.totalSupply, context.tokenPrice, '0xb1379D050739dA4457C0c02027251403E805D816', context.bronzeLevel, context.silverLevel, context.goldLevel]
+      args: [name, symbol, totalSupply, tokenPrice, '0xb1379D050739dA4457C0c02027251403E805D816', bronzeLevel, silverLevel, goldLevel]
     });
 
     console.log('deployed!', addr);
@@ -38,7 +37,14 @@ export default function useDeployContract() {
     return addr;
   }
 
-  async function updateContractMetadata() {
+  async function updateContractMetadata(
+    avatarURI: string,
+    backgroundURI: string,
+    lockedAvatarURI: string,
+    lockedBackgroundURI :string,
+    publicKnowledgeURI: string,
+    privateKnowledgeURI: string,
+  ) {
     /**
      function updateMetadata(
         string memory _unlockedGlbURI,
@@ -53,7 +59,7 @@ export default function useDeployContract() {
       abi: nero.abi,
       address: tokenAddress!,
       functionName: 'updateMetadata',
-      args: [context.avatarURI, context.backgroundURI, context.lockedAvatarURI, context.lockedBackgroundURI, context.publicKnowledgeURI, context.privateKnowledgeURI],
+      args: [avatarURI, backgroundURI, lockedAvatarURI, lockedBackgroundURI, publicKnowledgeURI, privateKnowledgeURI],
       account: address,
     });
 
