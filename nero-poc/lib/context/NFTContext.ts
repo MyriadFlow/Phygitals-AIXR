@@ -21,7 +21,11 @@ export type NFTContextType = {
   tokenPrice: number, setTokenPrice: React.Dispatch<React.SetStateAction<number>>,
   // export metadata
   exportMetadata: (update: (message:string) => void) => Promise<string>,
-  stepValid: (step:number) => boolean
+  stepValid: (step:number) => boolean,
+
+  bronzeLevel: number, setBronzeLevel: React.Dispatch<React.SetStateAction<number>>,
+  silverLevel: number, setSilverLevel: React.Dispatch<React.SetStateAction<number>>,
+  goldLevel: number, setGoldLevel: React.Dispatch<React.SetStateAction<number>>,
 }
 
 const NFTContext = createContext({} as NFTContextType);

@@ -1,11 +1,10 @@
 import { Client, create } from '@web3-storage/w3up-client'
-import { useContext, useEffect, useState } from 'react'
-import NFTContext from '../context/NFTContext';
+import { useState } from 'react'
 import * as Delegation from '@ucanto/core/delegation';
+import { BlobLike } from '@web3-storage/w3up-client/types';
 
 export default function useWeb3Storage() {
   const [account, setAccount] = useState<Client>();
-  const context = useContext(NFTContext);
   const [lastDelegation, setLastDelegation] = useState(0);
 
   async function getDelegation() {
@@ -37,14 +36,11 @@ export default function useWeb3Storage() {
     setLastDelegation(Date.now() + 3 * 60 * 1000); // 3 minutes
   }
 
-  useEffect(() => {
+  async function uploadFile(file:BlobLike) {
     getDelegation();
-
-  }, []);
-
-  function uploadFile() {
     console.log('uploading file', account);
-    account?.uploadFile(context.avatar!).then(console.log).catch(console.error);
+    const result = account?.uploadFile(file);
+    return result;
   }
 
   return { account, uploadFile };
