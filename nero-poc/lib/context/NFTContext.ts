@@ -18,9 +18,9 @@ export type NFTContextType = {
 
   //traits
   traits: { id: string, trait_type: string, value: string }[], setTraits: React.Dispatch<React.SetStateAction<{ id: string, trait_type: string, value: string }[]>>,
-
+  tokenPrice: number, setTokenPrice: React.Dispatch<React.SetStateAction<number>>,
   // export metadata
-  exportMetadata: () => Promise<string>,
+  exportMetadata: (update: (message:string) => void) => Promise<string>,
   stepValid: (step:number) => boolean
 }
 

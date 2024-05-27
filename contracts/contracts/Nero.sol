@@ -18,16 +18,21 @@ contract Nero is ERC721A, Ownable, AccessControl {
 
     string public tokenURILink; // single token URI
 
-    uint256 public danceMove;
+    uint256 public pricePerTokenMint;
+
+    // uint256 public danceMove;
+    mapping(uint256 => uint256) public danceMoves; // mapping of dance move to token; only the owner of the token can change it
 
     constructor(
         string memory name,
         string memory description,
         uint256 supply,
+        uint256 price,
         address nero // our public key so we can auto-update scoreboard
     ) ERC721A(name, description) Ownable(msg.sender) {
         maxSupply = supply;
         _grantRole(MINTER_ROLE, nero);
+        pricePerTokenMint = price;
     }
 
     modifier unlocked() {
@@ -57,6 +62,7 @@ contract Nero is ERC721A, Ownable, AccessControl {
             _totalMinted() + quantity <= maxSupply && maxSupply > 0,
             "cannot mint more than max supply"
         );
+        require(msg.value == pricePerTokenMint * quantity, "please pay required amount to mint");
         // `_mint`'s second argument now takes in a `quantity`, not a `tokenId`.
         _mint(msg.sender, quantity);
     }
@@ -125,8 +131,9 @@ contract Nero is ERC721A, Ownable, AccessControl {
     // Guitar Animations: 5-M_Dances_005, 6-008, 7-009 & 8-F_Dances_007
     // if not these no dancing
 
-    function updateDanceMove(uint256 move) public onlyOwner {
-        danceMove = move;
+    function updateDanceMove(uint256 tokenId, uint256 move) public {
+        require(ownerOf(tokenId) == msg.sender, 'not the owner of the token, cannot change dance move');
+        danceMoves[tokenId] = move;
     }
 
     /// Interface overrides

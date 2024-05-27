@@ -1,9 +1,11 @@
 import NFTContext from "@/lib/context/NFTContext";
+import useWeb3Storage from "@/lib/hooks/useWeb3Storage";
 import { Box, FormControl, Grid, Input, InputLabel, Typography } from "@mui/material";
 import { useContext } from "react";
 
 export default function TokenPanel() {
   const context = useContext(NFTContext);
+  console.log('token panel refresh');
   return <div className="flex flex-col gap-4 p-4">
     <Typography variant="h6">
       Configure your Token Details
@@ -21,6 +23,10 @@ export default function TokenPanel() {
         <FormControl>
           <InputLabel htmlFor="external_url">External URL</InputLabel>
           <Input id="external_url" aria-describedby="my-helper-text" value={context.externalURL}  onChange={e=>context.setExternalURL(e.target.value)}/>
+        </FormControl>
+        <FormControl>
+          <InputLabel htmlFor="price">Fixed Price Per token</InputLabel>
+          <Input id="price" aria-describedby="my-helper-text" type="number" value={context.tokenPrice}  onChange={e=>context.setTokenPrice(+e.target.value)}/>
         </FormControl>
         <FormControl>
           <InputLabel htmlFor="tokenSupply">Token Supply</InputLabel>

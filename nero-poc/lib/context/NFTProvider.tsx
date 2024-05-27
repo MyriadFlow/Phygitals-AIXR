@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import NFTContext from './NFTContext';
+import useLitLibrary from '../hooks/useLitLibrary';
 
 const NFTProvider = ({ children }: any) => {
   const [avatar, setAvatar] = useState<File>();
@@ -25,19 +26,47 @@ const NFTProvider = ({ children }: any) => {
   const [publicAgentKnowledge, setPublicAgentKnowledge] = useState<string>(`Lexi, renowned street dancer and fashion designer, had often surveyed her muse high above the city's pulsing heart. Below, a human kaleidoscope mirrored her own passion: cars streamed with the fluidity of a b-boy freeze, pedestrians weaved through the concrete jungle with practiced grace, and the distant thump of bass vibrated like a breaking beat. This urban symphony had always been her lifeblood, fueling "Concrete Rhythm," her thriving clothing brand. From the day she first defied gravity on cracked pavement, the city and her dance had intertwined. Every sharp turn inspired a bold graphic tee, every burst of color whispered the secrets of flowing movement in sweatpants. Now, this latest collection was the culmination of that fusion. It wasn't just clothes – it was a limited edition line of sneakers. Sleek, futuristic kicks built for conquering concrete battlegrounds, each step a statement. They embodied both the agility of Lexi's moves and the city's unwavering spirit. Lexi, the self-made artist who found her rhythm where concrete met movement, was about to unleash her masterpiece.`);
   const [privateAgentKnowledge, setPrivateAgentKnowledge] = useState<string>(`Lexi, renowned street dancer and fashion designer, had often surveyed her muse high above the city's pulsing heart. Below, a human kaleidoscope mirrored her own passion: cars streamed with the fluidity of a b-boy freeze, pedestrians weaved through the concrete jungle with practiced grace, and the distant thump of bass vibrated like a breaking beat. This urban symphony had always been her lifeblood, fueling "Concrete Rhythm," her thriving clothing brand. From the day she first defied gravity on cracked pavement, the city and her dance had intertwined. Every sharp turn inspired a bold graphic tee, every burst of color whispered the secrets of flowing movement in sweatpants. Now, this latest collection was the culmination of that fusion. It wasn't just clothes – it was a limited edition line of sneakers. Sleek, futuristic kicks built for conquering concrete battlegrounds, each step a statement. They embodied both the agility of Lexi's moves and the city's unwavering spirit. Lexi, the self-made artist who found her rhythm where concrete met movement, was about to unleash her masterpiece.`);
 
-  async function exportMetadata(): Promise<string> {
+  const [tokenPrice, setTokenPrice] = useState(0);
+
+  const {encryptFile, encryptData} = useLitLibrary();
+
+  async function exportMetadata(update: (message:string) => void): Promise<string> {
+    // mint an NFT and set to owner
     // encrypt private agent knowledge and unlocked avatar and background using lit
     // upload the metadata into filecoin
-    // mint an NFT and set to owner
     // notify user of success and redirect user?
+    
+    if (privateAgentKnowledge.length > 0) {
+      update('Encrypting Private Agent Knowledge');
+      console.log(await encryptData(privateAgentKnowledge));
+    }
+
+    if (unlockedAvatar) {
+      console.log(await encryptFile(unlockedAvatar))
+    }
+
+    if (unlockedBackground) {
+       console.log(await (encryptFile(unlockedBackground)))
+    }
+
+    // upload encrypted data and non-encrypted data files to filecoin (web3.storage)
+
+    // create metadata object for NFT
+
     const json = {
       'name': name,
       'description': description,
       'external_url': externalURL,
-      'image': '',
-      'traits': traits
+      'image': '', // ipfs url of the image
+      'traits': traits,
       // 'traits': 
+      'knowledge': {
+        'public': publicAgentKnowledge,
+        'private': privateAgentKnowledge
+      }
     };
+
+
     return "";
   }
 
@@ -72,6 +101,8 @@ const NFTProvider = ({ children }: any) => {
       externalURL, setExternalURL,
       exportMetadata,
       stepValid,
+      tokenPrice,
+      setTokenPrice,
     }}>
       {children}
     </NFTContext.Provider>
