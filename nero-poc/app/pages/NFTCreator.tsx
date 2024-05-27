@@ -16,6 +16,13 @@ export default function NFTCreator() {
   const [step, setStep] = useState(0);
   const context = useContext(NFTContext);
 
+  const [message, setMessage] = useState('');
+
+  function appendMessage(msg: string) {
+    console.log(msg);
+    setMessage((prev) => prev + '\n' + msg);
+  }
+
   const component = useMemo(() => {
     if (step === 0) {
       return <TokenPanel />
@@ -68,10 +75,16 @@ export default function NFTCreator() {
       <div className='flex flex-row gap-2 justify-items-end'>
         <Button disabled={step === 0} onClick={() => setStep(step - 1)}>Back</Button>
         {step < 4 && <ConnectNextButton disabled={!context.stepValid(step)} onClick={() => { setStep(step + 1) }} />}
-        {step === 4 && <Button variant='contained' color='error'>Mint NFT</Button>}
+        {step === 4 && <Button variant='contained' color='error' disabled={!context.stepsValid()} onClick={() => {
+          setMessage(() => '');
+          context.exportMetadata(appendMessage);
+        }}>Mint NFT</Button>}
         <div className='flex-1'><w3m-button/></div>
 
       </div>
+      {step === 4 && <Typography variant='h6'>Log Messages from Minting</Typography>}
+      {step === 4 && <textarea value={message} readOnly rows={8} className='border border-red-100'/>}
+      
       <Paper className='p-8'>
         {component}
       </Paper>

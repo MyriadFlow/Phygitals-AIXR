@@ -70,56 +70,76 @@ const NFTProvider = ({ children }: any) => {
     // upload the metadata into filecoin
     // notify user of success and redirect user?
 
-    const contractAddress = await deploy721A(name, symbol, totalSupply, tokenPrice, bronzeLevel, silverLevel, goldLevel);
+    try {
 
-    const avatarURI = getLink((await uploadFile(avatar!))!.toString());
-    const backgroundURI = getLink((await uploadFile(background!))!.toString());
-    setAvatarURI(avatarURI);
-    setBackgroundURI(backgroundURI);
+      update('1. Deploying smart contract ' + name);
+      const contractAddress = await deploy721A(name, symbol, totalSupply, tokenPrice, bronzeLevel, silverLevel, goldLevel);
+      update(`1.1 Smart contract deployed at ${contractAddress}`);
+      update('2. Uploading avatar and background images to IPFS');
+      const avatarURI = getLink((await uploadFile(avatar!))!.toString());
+      const backgroundURI = getLink((await uploadFile(background!))!.toString());
+      setAvatarURI(avatarURI);
+      setBackgroundURI(backgroundURI);
 
-    // create metadata object for NFT
+      update('2.1 Upload of avatar and background success, uri is avatar:' + avatarURI + ', background:' + backgroundURI);
 
-    const json = {
-      'name': name,
-      'description': description,
-      'external_url': externalURL,
-      'image': avatarURI, // ipfs url of the image
-      'traits': traits,
-      'avatar': {
-        'locked': avatarURI,
-        'lockedBackground': backgroundURI,
-        'unlocked': '',
-        'unlockedBackground': '',
-      },
-      'knowledge': {
-        'public': '',
-        'private': '',
+      // create metadata object for NFT
+
+      const json = {
+        'name': name,
+        'description': description,
+        'external_url': externalURL,
+        'image': avatarURI, // ipfs url of the image
+        'traits': traits,
+        'avatar': {
+          'locked': avatarURI,
+          'lockedBackground': backgroundURI,
+          'unlocked': '',
+          'unlockedBackground': '',
+        },
+        'knowledge': {
+          'public': '',
+          'private': '',
+        }
+      };
+      // upload encrypted data and non-encrypted data files to filecoin (web3.storage)
+
+      update('3. Checking private encrypted data for knowledge, avatar and background');
+      if (privateAgentKnowledge.length > 0) {
+        update('3.1.1. Encrypting Private Agent Knowledge');
+        const [ciphertext, dataToEncryptHash] = await encryptData(privateAgentKnowledge, contractAddress!);
+        json.knowledge.private = await uploadPrivateData(ciphertext, dataToEncryptHash);
+        update('3.1.1. Private knowledge encrypted and uploaded to file ' + json.knowledge.private);
       }
-    };
-    // upload encrypted data and non-encrypted data files to filecoin (web3.storage)
 
-    if (privateAgentKnowledge.length > 0) {
-      update('Encrypting Private Agent Knowledge');
-      const [ciphertext, dataToEncryptHash] = await encryptData(privateAgentKnowledge, contractAddress!);
-      json.knowledge.private = await uploadPrivateData(ciphertext, dataToEncryptHash);
+      if (unlockedAvatar) {
+        update('3.1.2. Encrypting Private Agent Avatar');
+        const [ciphertext, dataToEncryptHash] = (await encryptFile(unlockedAvatar, contractAddress!))
+        json.avatar.unlocked = await uploadPrivateData(ciphertext, dataToEncryptHash)
+        update('3.1.2. Private avatar encrypted and uploaded to file ' + json.avatar.unlocked);
+      }
+
+      if (unlockedBackground) {
+        update('3.1.3. Encrypting Private Agent Background');
+        const [ciphertext, dataToEncryptHash] = (await (encryptFile(unlockedBackground, contractAddress!)))
+        json.avatar.unlockedBackground = await uploadPrivateData(ciphertext, dataToEncryptHash)
+        update('3.1.3. Private avatar background encrypted and uploaded to file ' + json.avatar.unlockedBackground);
+      }
+
+      // upload metadata
+      const metadataURI = await uploadBlob(JSON.stringify(json));
+
+      update('4. metadata created ' + metadataURI);
+
+      update('5. updating all uri into smart contract and locking smart contract');
+
+
     }
-
-    if (unlockedAvatar) {
-      update('Encrypting Private Agent Avatar');
-      const [ciphertext, dataToEncryptHash] = (await encryptFile(unlockedAvatar, contractAddress!))
-      json.avatar.unlocked = await uploadPrivateData(ciphertext, dataToEncryptHash)
+    catch (exception) {
+      update('FAILED: error was ' + exception);
+      console.error(exception);
     }
-
-    if (unlockedBackground) {
-      update('Encrypting Private Agent Background');
-      const [ciphertext, dataToEncryptHash] = (await (encryptFile(unlockedBackground, contractAddress!)))
-      json.avatar.unlockedBackground = await uploadPrivateData(ciphertext, dataToEncryptHash)
-    }
-
-    // upload metadata
-    const metadataURI = await uploadBlob(JSON.stringify(json));
-
-    // set 
+    // set and lock contract
 
     return "";
   }
@@ -140,6 +160,10 @@ const NFTProvider = ({ children }: any) => {
     return false;
   }
 
+  function stepsValid(): boolean {
+    return stepValid(0) && stepValid(1) && stepValid(2) && stepValid(3);
+  }
+
   return (
     <NFTContext.Provider value={{
       name, setName,
@@ -153,8 +177,6 @@ const NFTProvider = ({ children }: any) => {
       publicAgentKnowledge, setPublicAgentKnowledge,
       privateAgentKnowledge, setPrivateAgentKnowledge,
       externalURL, setExternalURL,
-      exportMetadata,
-      stepValid,
       tokenPrice, setTokenPrice,
       bronzeLevel, setBronzeLevel,
       silverLevel, setSilverLevel,
@@ -168,6 +190,10 @@ const NFTProvider = ({ children }: any) => {
       publicKnowledgeURI, setPublicKnowlegeURI,
       privateKnowledgeURI, setPrivateKnowledgeURI,
       metadataURI, setMetadataURI,
+
+      exportMetadata,
+      stepValid,
+      stepsValid
     }}>
       {children}
     </NFTContext.Provider>

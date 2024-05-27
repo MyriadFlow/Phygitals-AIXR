@@ -1,5 +1,5 @@
 (async () => {
-  const url = "https://api.weather.gov/gridpoints/TOP/31,80/forecast";
+  const url = "https://<uri>/storage";
   const resp = await fetch(url).then((response) => response.json());
   const temp = resp.properties.periods[0].temperature;
 
