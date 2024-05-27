@@ -9,13 +9,13 @@ export default function Hero() {
       </p>
       <div className="flex justify-center space-x-4">
         <Link
-          href="/marketplace"
+          href="/explore"
           className="bg-primary-dark text-primary-light py-2 px-4 rounded"
         >
           Explore Marketplace
         </Link>
         <Link
-          href="/create-avatar"
+          href="/launch"
           className="bg-secondary text-primary-dark py-2 px-4 rounded"
         >
           Create Avatar

@@ -21,7 +21,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className="bg-gradient-radial from-accent to-secondary text-primary-light">
         <Web3ModalProvider initialState={initialState}>
           <main className="flex-grow">
             <Header />
