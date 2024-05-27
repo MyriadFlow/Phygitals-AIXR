@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    distDir: 'dist',
+    output: 'export',
     webpack: config => {
       config.externals.push('pino-pretty', 'lokijs', 'encoding')
       return config
