@@ -6,6 +6,7 @@ const nextConfig = {
     return config;
   },
   images: {
+    unoptimized: true,
     domains: ["qcntguqlgvrnctpcvjle.supabase.co"],
   },
 };
