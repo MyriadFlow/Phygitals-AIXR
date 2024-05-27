@@ -19,8 +19,8 @@ export const config = defaultWagmiConfig({
   chains,
   projectId,
   metadata,
-  ssr: true,
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
+  // ssr: true,
+  // storage: createStorage({
+  //   storage: cookieStorage,
+  // }),
 });

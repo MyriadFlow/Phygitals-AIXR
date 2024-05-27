@@ -17,12 +17,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const initialState = cookieToInitialState(config, headers().get("cookie"));
+  //const initialState = cookieToInitialState(config, headers().get("cookie"));
 
   return (
     <html lang="en">
       <body className="bg-gradient-radial from-accent to-secondary text-primary-light">
-        <Web3ModalProvider initialState={initialState}>
+        <Web3ModalProvider>
           <main className="flex-grow">
             <Header />
             {children}
