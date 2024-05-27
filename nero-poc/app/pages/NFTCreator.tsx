@@ -1,3 +1,4 @@
+"use client"
 import { Box, Button, Container, Paper, Typography } from '@mui/material';
 import { useContext, useMemo, useState } from 'react';
 import Stepper from '@mui/material/Stepper';
@@ -64,10 +65,11 @@ export default function NFTCreator() {
 <Button variant='contained' onClick={checkAuth}>Sign With Eth</Button>
 <input type='file' name='upload avatar' onChange={e => getBase64(e.target.files![0])} /> */}
 
-      <div>
+      <div className='flex flex-row gap-2 justify-items-end'>
         <Button disabled={step === 0} onClick={() => setStep(step - 1)}>Back</Button>
         {step < 4 && <ConnectNextButton disabled={!context.stepValid(step)} onClick={() => { setStep(step + 1) }} />}
         {step === 4 && <Button variant='contained' color='error'>Mint NFT</Button>}
+        <div className='flex-1'><w3m-button/></div>
 
       </div>
       <Paper className='p-8'>

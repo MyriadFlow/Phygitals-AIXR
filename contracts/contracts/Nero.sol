@@ -22,6 +22,8 @@ contract Nero is ERC721A, Ownable, AccessControl {
 
     string public privateKnowledgeLink; // link to private knowledge configuration for token-gated content
 
+    string public metadataURI; // metadata 
+
     uint256 public pricePerTokenMint;
 
     uint256 public bronzeTierUnlock = 10; // 10 people visit, unlock dance move 1
@@ -30,14 +32,14 @@ contract Nero is ERC721A, Ownable, AccessControl {
 
     constructor(
         string memory name,
-        string memory description,
+        string memory symbol,
         uint256 supply,
         uint256 price, // price to be paid for nft
         address nero, // our public key so we can auto-update scoreboard
         uint256 bronzeLevel,
         uint256 silverLevel,
         uint256 goldLevel
-    ) ERC721A(name, description) Ownable(msg.sender) {
+    ) ERC721A(name, symbol) Ownable(msg.sender) {
         maxSupply = supply;
         _grantRole(MINTER_ROLE, nero);
         pricePerTokenMint = price;
@@ -96,8 +98,8 @@ contract Nero is ERC721A, Ownable, AccessControl {
         if (!_exists(tokenId)) _revert(URIQueryForNonexistentToken.selector);
 
         return
-            bytes(lockedGlbURI).length != 0
-                ? string(abi.encodePacked(lockedGlbURI))
+            bytes(metadataURI).length != 0
+                ? string(abi.encodePacked(metadataURI))
                 : "";
     }
 
@@ -134,15 +136,17 @@ contract Nero is ERC721A, Ownable, AccessControl {
         string memory _unlockedBackgroundURI,
         string memory _lockedGlbURI,
         string memory _lockedBackgroundURI,
-        string memory _publicKnowlege,
-        string memory _privateKnowledge
+        string memory _publicKnowlegeURI,
+        string memory _privateKnowledgeURI,
+        string memory _metadataURI
     ) public onlyOwner unlocked {
         lockedBackgroundURI = _lockedBackgroundURI;
         lockedGlbURI = _lockedGlbURI;
         unlockedBackgroundURI = _unlockedBackgroundURI;
         unlockedGlbURI = _unlockedGlbURI;
-        publicKnowledgeLink = _publicKnowlege;
-        privateKnowledgeLink = _privateKnowledge;
+        publicKnowledgeLink = _publicKnowlegeURI;
+        privateKnowledgeLink = _privateKnowledgeURI;
+        metadataURI = _metadataURI;
     }
 
     // Sneaker animations: 1-F_Dances_001, 2-005, 3-006, 4-007 & 

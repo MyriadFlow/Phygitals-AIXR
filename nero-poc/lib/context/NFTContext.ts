@@ -3,6 +3,7 @@ import React, { createContext } from 'react';
 export type NFTContextType = {
   // general nft attributes
   name: string, setName: React.Dispatch<React.SetStateAction<string>>,
+  symbol: string, setSymbol: React.Dispatch<React.SetStateAction<string>>,
   description: string, setDescription: React.Dispatch<React.SetStateAction<string>>,
   externalURL: string, setExternalURL: React.Dispatch<React.SetStateAction<string>>,
   totalSupply: number, setTotalSupply: React.Dispatch<React.SetStateAction<number>>,
@@ -26,6 +27,17 @@ export type NFTContextType = {
   bronzeLevel: number, setBronzeLevel: React.Dispatch<React.SetStateAction<number>>,
   silverLevel: number, setSilverLevel: React.Dispatch<React.SetStateAction<number>>,
   goldLevel: number, setGoldLevel: React.Dispatch<React.SetStateAction<number>>,
+
+  backgroundURI: string, setBackgroundURI: React.Dispatch<React.SetStateAction<string>>,
+  lockedBackgroundURI: string, setLockedBackgroundURI: React.Dispatch<React.SetStateAction<string>>,
+
+  avatarURI: string, setAvatarURI: React.Dispatch<React.SetStateAction<string>>,
+  lockedAvatarURI: string, setLockedAvatarURI: React.Dispatch<React.SetStateAction<string>>,
+
+  publicKnowledgeURI: string, setPublicKnowlegeURI: React.Dispatch<React.SetStateAction<string>>,
+  privateKnowledgeURI: string, setPrivateKnowledgeURI: React.Dispatch<React.SetStateAction<string>>,
+
+  metadataURI: string, setMetadataURI: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const NFTContext = createContext({} as NFTContextType);

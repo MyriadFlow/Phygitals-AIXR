@@ -1,5 +1,4 @@
 import NFTContext from "@/lib/context/NFTContext";
-import useWeb3Storage from "@/lib/hooks/useWeb3Storage";
 import { Box, FormControl, Grid, Input, InputLabel, Typography } from "@mui/material";
 import { useContext } from "react";
 
@@ -15,6 +14,10 @@ export default function TokenPanel() {
         <FormControl>
           <InputLabel htmlFor="name">Name</InputLabel>
           <Input id="name" aria-describedby="my-helper-text" value={context.name} onChange={e => context.setName(e.target.value)} />
+        </FormControl>
+        <FormControl>
+          <InputLabel htmlFor="symbol">NFT Symbol</InputLabel>
+          <Input id="symbol" aria-describedby="my-helper-text" value={context.symbol} onChange={e => context.setSymbol(e.target.value)} />
         </FormControl>
         <FormControl>
           <InputLabel htmlFor="description">Description</InputLabel>

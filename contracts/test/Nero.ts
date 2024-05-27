@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Nero", function () {
-  let Nero, nero: any, owner: any, addr1: any, addr2: any, minterRole: any, addrs: any;
+  let Nero, nero: any, owner: any, addr1:any , addr2: any, minterRole: any, addrs: any;
   const pricePerTokenMint = ethers.utils.parseEther("0.01");
 
   beforeEach(async function () {
@@ -150,6 +150,7 @@ describe("Nero", function () {
       const lockedBackgroundURI = "new locked Background URI";
       const publicKnowledgeLink = "new public knowledge";
       const privateKnowledgeLink = "new private knowledge";
+      const metadataURI = "new metadata URI";
 
       await nero.updateMetadata(
         unlockedGlbURI,
@@ -157,7 +158,8 @@ describe("Nero", function () {
         lockedGlbURI,
         lockedBackgroundURI,
         publicKnowledgeLink,
-        privateKnowledgeLink
+        privateKnowledgeLink,
+        metadataURI
       );
 
       expect(await nero.unlockedGlbURI()).to.equal(unlockedGlbURI);
@@ -166,6 +168,7 @@ describe("Nero", function () {
       expect(await nero.lockedBackgroundURI()).to.equal(lockedBackgroundURI);
       expect(await nero.publicKnowledgeLink()).to.equal(publicKnowledgeLink);
       expect(await nero.privateKnowledgeLink()).to.equal(privateKnowledgeLink);
+      expect(await nero.metadataURI()).to.equal(metadataURI);
     });
 
     it("Should revert updating metadata if locked", async function () {
@@ -177,18 +180,27 @@ describe("Nero", function () {
           "new locked GLB URI",
           "new locked Background URI",
           "new public knowledge",
-          "new private knowledge"
+          "new private knowledge",
+          "new metadata URI"
         )
       ).to.be.revertedWith("nft already locked");
     });
   });
 
   describe("tokenURI", function () {
-    it("Should return the correct locked GLB URI", async function () {
-      const lockedURI = "locked GLB URI";
-      await nero.updateLockedGlb(lockedURI);
+    it("Should return the correct metadata URI", async function () {
+      const metadataURI = "metadata URI";
+      await nero.updateMetadata(
+        "unlocked GLB URI",
+        "unlocked Background URI",
+        "locked GLB URI",
+        "locked Background URI",
+        "public knowledge",
+        "private knowledge",
+        metadataURI
+      );
       await nero.mint(1, { value: pricePerTokenMint });
-      expect(await nero.tokenURI(0)).to.equal(lockedURI);
+      expect(await nero.tokenURI(0)).to.equal(metadataURI);
     });
 
     it("Should revert for non-existent token", async function () {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { checkAndSignAuthMessage } from '@lit-protocol/lit-node-client';
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { AuthSig } from '@lit-protocol/types';
@@ -8,20 +8,22 @@ export default function useLitLibrary() {
   const [client, setClient] = useState<LitJsSdk.LitNodeClient>();
   const [authSig, setAuthSig] = useState<AuthSig>();
 
-  function getAccessControlConditions() {
+  function getAccessControlConditions(contractAddress: string) {
     const accessControlConditions = [
       {
-        contractAddress: "",
-        standardContractType: "",
-        chain: "ethereum",
-        method: "eth_getBalance",
-        parameters: [":userAddress", "latest"],
+        contractAddress,
+        standardContractType: 'ERC721',
+        chain: 'sepolia',
+        method: 'balanceOf',
+        parameters: [
+          ':userAddress'
+        ],
         returnValueTest: {
-          comparator: ">=",
-          value: "0", // 0 ETH, so anyone can open
-        },
-      },
-    ];
+          comparator: '>',
+          value: '0'
+        }
+      }
+    ]
 
     return accessControlConditions;
   }
@@ -39,12 +41,12 @@ export default function useLitLibrary() {
     return litNodeClient;
   }
 
-  async function encryptData(dataToEncrypt: string) {
+  async function encryptData(dataToEncrypt: string, contractAddress: string) {
     let litNodeClient = client;
     if (!litNodeClient) {
       litNodeClient = await getLitNodeClient();
     }
-    const accessControlConditions = getAccessControlConditions();
+    const accessControlConditions = getAccessControlConditions(contractAddress);
     // 1. Encryption
     // <Blob> encryptedString
     // <Uint8Array(32)> dataToEncryptHash
@@ -60,12 +62,12 @@ export default function useLitLibrary() {
     return [ciphertext, dataToEncryptHash];
   }
 
-  async function encryptFile(fileToEncrypt: File) {
+  async function encryptFile(fileToEncrypt: File, contractAddress: string) {
     let litNodeClient = client;
     if (!litNodeClient) {
       litNodeClient = await getLitNodeClient();
     }
-    const accessControlConditions = getAccessControlConditions();
+    const accessControlConditions = getAccessControlConditions(contractAddress);
     // 1. Encryption
     // <Blob> encryptedString
     // <Uint8Array(32)> dataToEncryptHash
@@ -84,8 +86,8 @@ export default function useLitLibrary() {
   async function decryptData(
     ciphertext: string,
     dataToEncryptHash: string,
-    accessControlConditions: any,
-    authSig: AuthSig
+    authSig: AuthSig,
+    contractAddress: string
   ) {
     const litNodeClient = await getLitNodeClient();
 
@@ -94,7 +96,7 @@ export default function useLitLibrary() {
       decryptedString = await LitJsSdk.decryptToFile(
         {
           authSig,
-          accessControlConditions,
+          accessControlConditions: getAccessControlConditions(contractAddress),
           ciphertext,
           dataToEncryptHash,
           chain: "ethereum",
