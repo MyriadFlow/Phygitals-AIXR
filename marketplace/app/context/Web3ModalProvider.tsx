@@ -1,37 +1,32 @@
-'use client'
+'use client';
 
-import React, { ReactNode } from 'react'
-import { config, projectId } from '../lib/config'
+import React, { ReactNode, useEffect, useState } from 'react';
+import { config } from '../lib/config';
+import { createWeb3Modal } from '@web3modal/wagmi/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WagmiProvider } from 'wagmi';
 
-import { createWeb3Modal } from '@web3modal/wagmi/react'
+const queryClient = new QueryClient();
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-import { State, WagmiProvider } from 'wagmi'
-
-// Setup queryClient
-const queryClient = new QueryClient()
-
-if (!projectId) throw new Error('Project ID is not defined')
-
-// Create modal
 createWeb3Modal({
   wagmiConfig: config,
-  projectId,
-  enableAnalytics: true, // Optional - defaults to your Cloud configuration
-  enableOnramp: true // Optional - false as default
-})
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
+  enableAnalytics: true,
+  enableOnramp: true,
+});
 
-export default function Web3ModalProvider({
-  children,
-  initialState
-}: {
-  children: ReactNode
-  initialState?: State
-}) {
+export default function Web3ModalProvider({ children }: { children: ReactNode }) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
+
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
-  )
+  );
 }
