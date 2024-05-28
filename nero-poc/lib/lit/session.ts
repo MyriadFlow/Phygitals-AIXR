@@ -1,16 +1,14 @@
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import {ethers} from 'ethers';
 import { LitResourceAbilityRequest } from "@lit-protocol/auth-helpers";
 import { AuthCallbackParams } from "@lit-protocol/types";
 import { AuthSig } from '@lit-protocol/types';
 
 export const genSession = async (
-    wallet: ethers.Wallet,
     client: LitNodeClient,
     resources: LitResourceAbilityRequest[],
     authSig: AuthSig) => {
     let sessionSigs = await client.getSessionSigs({
-        chain: "ethereum",
+        chain: "seoplia",
         resourceAbilityRequests: resources,
         authNeededCallback: async (params: AuthCallbackParams) => {
           console.log("resourceAbilityRequests:", params.resources);

@@ -140,7 +140,7 @@ const NFTProvider = ({ children }: any) => {
 
       update('5. updating all uri into smart contract and locking smart contract');
 
-      const result = await updateContractMetadata(contractAddress!, avatarURI, backgroundURI, json.avatar.locked, json.avatar.lockedBackground, json.knowledge.public, json.knowledge.private, metadataURI);
+      const result = await updateContractMetadata(contractAddress!, avatarURI, backgroundURI, json.avatar.unlocked, json.avatar.unlockedBackground, json.knowledge.public, json.knowledge.private, metadataURI);
       
       update('5.1. metadata updated with txn hash ' + result);
       update(' -- CONGRATS! YOUR NFT IS UPDATED --');

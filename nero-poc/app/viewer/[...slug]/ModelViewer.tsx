@@ -1,7 +1,7 @@
 import '@google/model-viewer';
 
 const Model = ({src}: {src:string}) => (
-  <div id="card">
+  <div id="card" className='w-full h-full'>
   <model-viewer
     src={src}
     ios-src=""

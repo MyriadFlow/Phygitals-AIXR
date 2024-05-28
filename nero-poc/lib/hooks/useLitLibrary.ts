@@ -3,6 +3,7 @@ import { checkAndSignAuthMessage } from '@lit-protocol/lit-node-client';
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { AuthSig } from '@lit-protocol/types';
 import { LitNetwork } from "@lit-protocol/constants";
+import { genSession } from '../lit/session';
 
 export default function useLitLibrary() {
   const [client, setClient] = useState<LitJsSdk.LitNodeClient>();
@@ -26,6 +27,31 @@ export default function useLitLibrary() {
     ]
 
     return accessControlConditions;
+  }
+
+  async function executeLitAction(contractAddress: string, code: string) {
+    let litNodeClient = client;
+
+    if (!litNodeClient) {
+      litNodeClient = await getLitNodeClient();
+    }
+
+
+    let sig = authSig;
+    if (!sig) {
+      sig = await connect();
+    }
+    const accessControlConditions = getAccessControlConditions(contractAddress);
+
+    const res = await litNodeClient.executeJs({
+      code,
+      sessionSigs: sig, //await genSession(litNodeClient, [], sig), // your session
+      jsParams: {
+        accessControlConditions
+      }
+    });
+
+    console.log("Execute JS success", res);
   }
 
   async function getLitNodeClient() {
@@ -94,7 +120,6 @@ export default function useLitLibrary() {
   async function decryptData(
     ciphertext: string,
     dataToEncryptHash: string,
-    authSig: AuthSig,
     contractAddress: string
   ) {
     const litNodeClient = await getLitNodeClient();
@@ -102,6 +127,8 @@ export default function useLitLibrary() {
     if (!authSig) {
       sig = await connect();
     }
+
+    console.log(dataToEncryptHash, contractAddress);
 
     let decryptedString;
     try {
@@ -116,6 +143,7 @@ export default function useLitLibrary() {
         litNodeClient
       );
     } catch (e) {
+      console.error(e);
       console.log('failed', e);
     }
 
@@ -156,6 +184,7 @@ export default function useLitLibrary() {
     encryptFile,
     encryptData,
     decryptData,
+    executeLitAction,
   }
 
 }

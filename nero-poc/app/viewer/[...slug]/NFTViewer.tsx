@@ -1,6 +1,6 @@
 "use client"
 import nero from '@/lib/artifacts/contracts/Nero.sol/Nero.json';
-import { Box, Button, CircularProgress, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CircularProgress, Container, Grid, Typography } from '@mui/material';
 import { Hex, createPublicClient, decodeEventLog, http } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useChainId, useReadContracts, useWalletClient } from "wagmi"
@@ -8,6 +8,8 @@ import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
+import useLitLibrary from '@/lib/hooks/useLitLibrary';
+import code from '@/lit-actions/unlock-token-content';
 
 const Model = dynamic(
   () => import('./ModelViewer'),
@@ -18,6 +20,23 @@ const publicClient = createPublicClient({
   chain: sepolia,
   transport: http()
 });
+
+function getFile(raw: any, fileType: string) {
+
+  // var reader = new FileReader();
+  // reader.readAsDataURL(new Blob([raw], {}))
+  // reader.onload = function () {
+  //   console.log(reader.result);
+  //   setImageFile(reader.result?.toString()!);
+  // };
+  // reader.onerror = function (error) {
+  //   console.log('Error: ', error);
+  // };
+  // console.log(new Blob([raw], {type: 'image/jpeg'}));
+  // console.log(URL.createObjectURL(new Blob([raw], {type: 'image/jpeg'})));
+  console.log(Buffer.from(raw).toString('base64'));
+  return ("data:" + fileType + ";base64," + Buffer.from(raw).toString('base64'));
+}
 
 
 export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?: number }) {
@@ -30,69 +49,102 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
   const [txnHash, setTxnHash] = useState('');
 
   const chainId = useChainId();
+
+  const [modelSource, setModelSource] = useState('');
+
   // const context = useContext(NFTContext);
   const { data: walletClient } = useWalletClient({ chainId });
 
+  const {decryptData, executeLitAction} = useLitLibrary();
+
+  const contracts = [
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'metadataURI',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'totalSupply',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'maxSupply',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'name',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'symbol',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'lockedGlbURI',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'lockedBackgroundURI',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'pricePerTokenMint',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'unlockedBackgroundURI',
+      chainId: sepolia.id
+    },
+    {
+      abi: nero.abi,
+      address,
+      functionName: 'unlockedGlbURI',
+      chainId: sepolia.id
+    }
+  ] as any
+
+  if (tokenId !== 0 && tokenId !== undefined && tokenId >= 0) {
+    contracts.push(
+      {
+        abi: nero.abi,
+        address,
+        functionName: 'ownerOf',
+        chainId: sepolia.id,
+        args: [tokenId || 0]
+      },);
+  }
 
   const results = useReadContracts({
     allowFailure: false,
-    contracts: [
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'metadataURI',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'totalSupply',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'maxSupply',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'name',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'symbol',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'lockedGlbURI',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'lockedBackgroundURI',
-        chainId: sepolia.id
-      },
-      {
-        abi: nero.abi,
-        address,
-        functionName: 'pricePerTokenMint',
-        chainId: sepolia.id
-      },
-    ]
+    contracts: contracts
   });
 
+  console.log(results.data);
+
   useEffect(() => {
+    console.log(results.isFetched, results.data);
     if (!results.isFetched || !results.data) {
       return;
     }
     if (metadata) {
+      console.log('metadata exists??');
       return;
     }
     console.log('fetched, lets grab the metadata');
@@ -101,7 +153,10 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
       const json = await res.json();
       console.log(json);
       setMetadata(json);
-    })
+      setModelSource(json.avatar.locked)
+    });
+
+
   }, [results]);
 
   async function buyNow() {
@@ -146,7 +201,23 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     }
     finally {
       setBuying(false);
+      results.refetch()
     }
+  }
+
+  async function unlockAvatar() {
+    if (!metadata) {
+      return;
+    }
+    const resp = await fetch(metadata.avatar.unlocked).then((response) => response.json()); // json gives us the ciphertext and hash for data
+
+    console.log(resp);
+
+    const decrypt = await decryptData(resp.ciphertext, resp.dataToEncryptHash, address);
+
+    console.log(decrypt);
+
+    setModelSource(getFile(decrypt, 'octet/stream'));
   }
 
   const statusMessage = useMemo(() => {
@@ -171,6 +242,35 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     </Box>
   }, [buyStatus])
 
+  const supply = useMemo(() => {
+    if (!results.data || results.isError) {
+      return <></>;
+    }
+    const minted = Number(results.data[1] as any);
+    const supply = Number(results.data[2] as any);
+
+    return <div className='py-2'><Typography variant="caption">Minted {minted} of {supply}</Typography></div>
+  }, [results])
+
+  const traits = useMemo(() => {
+    if (!metadata || !metadata.traits) {
+      return <></>;
+    }
+
+    return <Grid spacing={2} container>{metadata.traits.map((t: any) => (<Grid item xs={4} key={t.id}> <Card variant="elevation" key={t.id}>
+      <CardContent>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          {t.trait_type}
+        </Typography>
+        <Typography variant="body2">
+          {t.value}
+        </Typography>
+      </CardContent>
+    </Card>
+    </Grid>))}
+    </Grid>
+
+  }, [results])
 
   if (!results.isFetched) {
     return <Container maxWidth="lg">
@@ -192,17 +292,22 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     </Container>
   }
 
-  if (tokenId === undefined || isNaN(tokenId)) {
+  console.log('token id is', tokenId);
+
+  if (tokenId !== 0 && !tokenId) {
 
     return <Container maxWidth="lg">
       <w3m-button />
       <Grid container>
-        <Grid item xs={6}>
-          <Model src={results.data?.[5] as string} />
+        <Grid item xs={6} height={"600px"}>
+
+          <Model src={modelSource} />
         </Grid>
         <Grid item xs={6}>
           <Typography variant='h4'>{results.data?.[3] as string}</Typography>
           <Typography variant='body1'>{metadata && metadata.description}</Typography>
+          {supply}
+          {traits}
           <Button variant="contained" onClick={buyNow} disabled={buying}>{buying ? "Minting a token!" : "Buy Now"}</Button>
           {statusMessage}
         </Grid>
@@ -210,5 +315,23 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     </Container>
   }
 
-  return <></>
+  console.log(modelSource);
+
+  return <Container maxWidth="lg">
+  <w3m-button />
+  <Grid container>
+    <Grid item xs={6} height={"600px"}>
+      <Model src={modelSource} />
+    </Grid>
+    <Grid item xs={6}>
+      <Typography variant='h4'>{results.data?.[3] as string} # {tokenId}</Typography>
+      <Typography variant='body1'>{metadata && metadata.description}</Typography>
+      Owner - {results.data[8] as string}
+      {supply}
+      {traits}
+      <Button variant="contained" onClick={unlockAvatar} disabled={buying}>Unlock Token</Button>
+      {statusMessage}
+    </Grid>
+  </Grid>
+</Container>
 }

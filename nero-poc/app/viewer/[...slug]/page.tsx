@@ -18,7 +18,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   return (
     <Web3ModalProvider initialState={initialState}>
       <NFTProvider>
-        <NFTViewer address={params.slug[0]! as Hex}/>
+        <NFTViewer address={params.slug[0]! as Hex} tokenId={+params.slug[1]}/>
       </NFTProvider>
     </Web3ModalProvider>
   )

@@ -87,7 +87,8 @@ export default function NFTCreator() {
         <Button disabled={step === 0} onClick={() => setStep(step - 1)}>Back</Button>
         {step < 4 && <ConnectNextButton disabled={!context.stepValid(step)} onClick={() => { setStep(step + 1) }} />}
         {step === 4 && contractAddress.length === 0 && <Button variant='contained' color='error' disabled={!context.stepsValid() || minting} onClick={mintNFT}>{minting ? "Minting ..." : "Mint NFT"}</Button>}
-        {step === 4 && contractAddress.length > 0 && <Button variant='contained' color='success' disabled={!context.stepsValid() || minting} onClick={() => window.open('https://sepolia.etherscan.io/address/' + contractAddress)}>View NFT</Button>}
+        {step === 4 && contractAddress.length > 0 && <Button variant='contained' color='success' disabled={!context.stepsValid() || minting} onClick={() => window.open('https://sepolia.etherscan.io/address/' + contractAddress)}>View on Etherscan</Button>}
+        {step === 4 && contractAddress.length > 0 && <Button color='success' disabled={!context.stepsValid() || minting} onClick={() => window.open('/viewer/' + contractAddress)}>View NFT</Button>}
         <div className='flex-1'><w3m-button/></div>
 
       </div>
