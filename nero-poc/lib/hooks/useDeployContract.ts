@@ -1,7 +1,16 @@
 import { useState } from "react";
 import nero from "../artifacts/contracts/Nero.sol/Nero.json";
 import { useAccount, useChainId, useWalletClient } from "wagmi";
-import { Hex } from "viem";
+import { Address, Hex } from "viem";
+import { waitForTransactionReceipt } from "viem/actions";
+import { createPublicClient, http } from "viem";
+import { mainnet, sepolia } from "viem/chains";
+
+const publicClient = createPublicClient({
+  chain: sepolia,
+  transport: http()
+});
+
 export default function useDeployContract() {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
@@ -23,27 +32,35 @@ export default function useDeployContract() {
         uint256 silverLevel,
         uint256 goldLevel*/
 
-    const addr = await walletClient?.deployContract({
+    const hash = await walletClient?.deployContract({
       abi: nero.abi,
       bytecode: nero.bytecode as Hex,
       account: address,
       args: [name, symbol, totalSupply, tokenPrice, '0xb1379D050739dA4457C0c02027251403E805D816', bronzeLevel, silverLevel, goldLevel]
     });
 
-    console.log('deployed!', addr);
+    if (!hash) {
+      throw new Error('Failed to execute deploy contract txn');
+    }
+    console.log('deployed!', hash);
+    const txn = await publicClient.waitForTransactionReceipt({ hash });
 
-    setTokenAddress(addr);
+    console.log('transaction result is', txn, txn.to);
 
-    return addr;
+    setTokenAddress(txn.contractAddress!);
+
+    return txn.contractAddress;
   }
 
   async function updateContractMetadata(
+    tokenAddress: Address,
     avatarURI: string,
     backgroundURI: string,
     lockedAvatarURI: string,
-    lockedBackgroundURI :string,
+    lockedBackgroundURI: string,
     publicKnowledgeURI: string,
     privateKnowledgeURI: string,
+    metadataURI: string,
   ) {
     /**
      function updateMetadata(
@@ -55,28 +72,48 @@ export default function useDeployContract() {
         string memory _privateKnowledge
     )
      */
-    const result = await walletClient?.writeContract({
+    const hash = await walletClient?.writeContract({
       abi: nero.abi,
-      address: tokenAddress!,
+      address: tokenAddress,
       functionName: 'updateMetadata',
-      args: [avatarURI, backgroundURI, lockedAvatarURI, lockedBackgroundURI, publicKnowledgeURI, privateKnowledgeURI],
+      args: [avatarURI, backgroundURI, lockedAvatarURI, lockedBackgroundURI, publicKnowledgeURI, privateKnowledgeURI, metadataURI],
       account: address,
     });
 
-    console.log('updated contract metadata', result);
-    return result;
+    if (!hash) {
+      throw new Error('Failed to execute deploy contract txn');
+    }
+    console.log('deployed!', hash);
+    const txn = await publicClient.waitForTransactionReceipt({ hash });
+
+    console.log('transaction result is', txn, txn.to);
+
+    // setTokenAddress(txn.contractAddress!);
+
+    return txn.transactionHash;
   }
 
-  async function lockSmartContract() {
-    const result = await walletClient?.writeContract({
+  async function lockSmartContract(tokenAddress: Address) {
+    const hash = await walletClient?.writeContract({
       abi: nero.abi,
-      address: tokenAddress!,
+      address: tokenAddress,
       functionName: 'lock',
       account: address,
     });
 
-    console.log('locked contract', result);
-    return result;
+    if (!hash) {
+      throw new Error('Failed to lock smart contract');
+    }
+    console.log('deployed!', hash);
+    const txn = await publicClient.waitForTransactionReceipt({ hash });
+
+    console.log('transaction result is', txn, txn.to);
+
+    // setTokenAddress(txn.contractAddress!);
+
+
+    console.log('locked contract', txn.transactionHash);
+    return txn.transactionHash;
   }
 
   return {

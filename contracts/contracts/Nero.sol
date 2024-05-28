@@ -85,7 +85,7 @@ contract Nero is ERC721A, Ownable, AccessControl {
 
     /// lock the access to the NFT; once locked you can't unlock it
 
-    function lock() external onlyOwner {
+    function lock() public onlyOwner {
         require(!locked, "already locked");
         locked = true;
     }
@@ -147,6 +147,7 @@ contract Nero is ERC721A, Ownable, AccessControl {
         publicKnowledgeLink = _publicKnowlegeURI;
         privateKnowledgeLink = _privateKnowledgeURI;
         metadataURI = _metadataURI;
+        lock();
     }
 
     // Sneaker animations: 1-F_Dances_001, 2-005, 3-006, 4-007 & 

@@ -46,6 +46,10 @@ export default function useLitLibrary() {
     if (!litNodeClient) {
       litNodeClient = await getLitNodeClient();
     }
+    let sig = authSig;
+    if (!authSig) {
+      sig = await connect();
+    }
     const accessControlConditions = getAccessControlConditions(contractAddress);
     // 1. Encryption
     // <Blob> encryptedString
@@ -54,8 +58,8 @@ export default function useLitLibrary() {
       {
         accessControlConditions,
         dataToEncrypt: dataToEncrypt,
-        chain: "ethereum",
-        authSig
+        chain: "sepolia",
+        authSig: sig
       },
       litNodeClient
     );
@@ -67,6 +71,10 @@ export default function useLitLibrary() {
     if (!litNodeClient) {
       litNodeClient = await getLitNodeClient();
     }
+    let sig = authSig;
+    if (!authSig) {
+      sig = await connect();
+    }
     const accessControlConditions = getAccessControlConditions(contractAddress);
     // 1. Encryption
     // <Blob> encryptedString
@@ -75,8 +83,8 @@ export default function useLitLibrary() {
       {
         accessControlConditions,
         file: fileToEncrypt,
-        chain: "ethereum",
-        authSig
+        chain: "sepolia",
+        authSig: sig
       },
       litNodeClient
     );
@@ -90,16 +98,20 @@ export default function useLitLibrary() {
     contractAddress: string
   ) {
     const litNodeClient = await getLitNodeClient();
+    let sig = authSig;
+    if (!authSig) {
+      sig = await connect();
+    }
 
     let decryptedString;
     try {
       decryptedString = await LitJsSdk.decryptToFile(
         {
-          authSig,
+          authSig: sig,
           accessControlConditions: getAccessControlConditions(contractAddress),
           ciphertext,
           dataToEncryptHash,
-          chain: "ethereum",
+          chain: "sepolia",
         },
         litNodeClient
       );
@@ -114,7 +126,7 @@ export default function useLitLibrary() {
     console.log('auth stuff');
     const litNodeClient = await getLitNodeClient();
     const authSig = await checkAndSignAuthMessage({
-      chain: "ethereum",
+      chain: "sepolia",
       nonce: await litNodeClient.getLatestBlockhash(),
     });
 

@@ -10,7 +10,7 @@ export default function useWeb3Storage() {
   async function getDelegation() {
     if (lastDelegation > 0 && Date.now() < lastDelegation) {
       console.log('already delegated');
-      return; 
+      return account; 
     }
     const acc = await create();
     setAccount(acc);
@@ -34,12 +34,14 @@ export default function useWeb3Storage() {
       console.log('delegation success!');
     }
     setLastDelegation(Date.now() + 3 * 60 * 1000); // 3 minutes
+
+    return acc;
   }
 
   async function uploadFile(file:BlobLike) {
-    getDelegation();
-    console.log('uploading file', account);
-    const result = account?.uploadFile(file);
+    const acc = await getDelegation();
+    console.log('uploading file', acc);
+    const result = acc?.uploadFile(file);
     return result;
   }
 
