@@ -1,14 +1,34 @@
 (async () => {
-  const url = "https://<uri>/storage";
-  const resp = await fetch(url).then((response) => response.json());
-  const temp = resp.properties.periods[0].temperature;
+  const testResult = await Lit.Actions.checkConditions({conditions, authSig, chain})
 
-  const temperatures = await Lit.Actions.broadcastAndCollect({
-    name: "temperature",
-    value: temp,
+  console.log('testResult', testResult)
+
+  // only grant storage request (3 minutes) to the DID if they pass the conditional checks of our code
+  if (!testResult){
+    return;
+  }
+
+  // hidden endpoint
+  const url = await Lit.Actions.decryptAndCombine({
+    accessControlConditions,
+    ciphertext,
+    dataToEncryptHash,
+    authSig: null,
+    chain,
   });
+  
+  // hidden api key
+  const apiKey = await Lit.Actions.decryptAndCombine({
+    accessControlConditions,
+    ciphertext: apiciphertext,
+    dataToEncryptHash: apidatatoencrypthash,
+    authSig: null,
+    chain,
+  }); 
 
-  // at this point, temperatures is an array of all the values that all the nodes got
-  const median = temperatures.sort()[Math.floor(temperatures.length / 2)];
-  Lit.Actions.setResponse({response: median});
+  const resp = await fetch(url, {method: "POST", body: {did}, authorization: apiKey}).then((response) => response.json());
+
+  console.log('called endpoint using api key and received delegation response');
+  
+  Lit.Actions.setResponse({response: resp});
 })();

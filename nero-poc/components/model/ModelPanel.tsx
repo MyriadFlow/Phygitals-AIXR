@@ -22,7 +22,7 @@ export default function ModelPanel() {
           <MediaUploadPanel name="Upload Avatar" accepts=".glb" fileSelected={context.setAvatar} file={context.avatar}/>
         </Grid>
         <Grid item xs={6}>
-          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png" fileSelected={context.setBackground} file={context.background}/>
+          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png,.mp4" fileSelected={context.setBackground} file={context.background}/>
         </Grid>
       </Grid>
     </Box>
@@ -38,7 +38,7 @@ export default function ModelPanel() {
           <MediaUploadPanel name="Upload Avatar" accepts=".glb" fileSelected={context.setUnlockedAvatar} file={context.unlockedAvatar}/>
         </Grid>
         <Grid item xs={6}>
-          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png" fileSelected={context.setUnlockedBackground} file={context.unlockedBackground}/>
+          <MediaUploadPanel name="Upload Background" accepts=".jpeg,.png,.mp4" fileSelected={context.setUnlockedBackground} file={context.unlockedBackground}/>
         </Grid>
       </Grid>
     </Box>
