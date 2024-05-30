@@ -9,7 +9,7 @@ import {
   LitAccessControlConditionResource,
   LitAbility,
 } from '@lit-protocol/auth-helpers';
-import code from '@/lit-actions/unlock-token-content';
+import code from '@/lit-actions/grant-webstorage';
 export default function useLitLibrary() {
   const [client, setClient] = useState<LitJsSdk.LitNodeClient>();
   const [authSig, setAuthSig] = useState<AuthSig>();
@@ -205,21 +205,25 @@ export default function useLitLibrary() {
     };
   }
 
-  const testDecData = async (ciphertext: string, dataToEncryptHash: string, sessionSigs: any, litNodeClient:any) => {
+  const testDecData = async (ciphertext: string, dataToEncryptHash: string, ciphertext2: string, dataToEncryptHash2: string, sessionSigs: any, litNodeClient:any) => {
     const authSig = await checkAndSignAuthMessage({
       chain: "sepolia",
       nonce: await litNodeClient.getLatestBlockhash(),
     });
+    console.log(ciphertext2, dataToEncryptHash2);
     const res = await litNodeClient.executeJs({
       sessionSigs,
       code: code,
       jsParams: {
-        accessControlConditions: getAccessControlConditions('0xa76cebf510409b2e504a47918a345ee3cb78dc23'),
+        accessControlConditions: getAccessControlConditions2(),
         ciphertext,
         dataToEncryptHash,
+        apiciphertext: ciphertext2,
+        apidatatoencrypthash: dataToEncryptHash2,
         sessionSigs,
         authSig,
-        url: "https://bafkreibnpyf4nyoy62ieaw7wqj4ysxcsuy5dw5kuxoxhu2eruofumdf3mq.ipfs.w3s.link"
+        chain: "sepolia",
+        did: "did:key:z6MkeoofmZ9zdYA7NLNjK5jkDoTSeYe8SHDcn3XJjbRGUp9N"
 
       }
     })
@@ -245,25 +249,36 @@ export default function useLitLibrary() {
     ])
 
     // console.log(authSig);
-    const messageToEncrypt = "Victa is awesome";
-
+    const messageToEncrypt = "130170db5009ee961e5c334b408456c0c57b0c2dee1ee86f0bdc8f41c89649218c8286713937e07930fcc242b59eefae1215692c550aba1c94dcf268dfa06d7b";
+    console.log('encrypting api key');
 
     const {ciphertext, dataToEncryptHash} = await testEncData(messageToEncrypt, sessionSigs, litNodeClient);
 
-    console.log('ciper done');
+    console.log('encrypting storage grant api (filecoin)');
+    const messageToEncrypt2 = "https://nero-fs.netlify.app/storage";
+    const {ciphertext: ct2, dataToEncryptHash: dt2} = await testEncData(messageToEncrypt2, sessionSigs, litNodeClient);
 
-    const decrypted = await decryptData(ciphertext, dataToEncryptHash);
+    // try to delegate storage using grant webstorage action
 
-    console.log(decrypted);
+    console.log('cipher done, lets try to get a grant for a did');
+
+    const decrypted = await testDecData(ct2, dt2, ciphertext, dataToEncryptHash, sessionSigs, litNodeClient);
+    console.log('decrypted?', decrypted);
+
+    // console.log('ciper done');
+
+    // const decrypted = await decryptData(ciphertext, dataToEncryptHash);
+
+    // console.log(decrypted);
 
 
-    const decrypted2 = await testDecData(ciphertext, dataToEncryptHash, sessionSigs, litNodeClient);
+    // const decrypted2 = await testDecData(ciphertext, dataToEncryptHash, sessionSigs, litNodeClient);
 
-    console.log(decrypted2);
+    // console.log(decrypted2);
 
-    // try post without api key
-    const result = await fetch('/storage', {method: 'post', body: JSON.stringify({'did': '123'}), headers: {'x-api-key': 'bob'}})
-    console.log(result);
+    // // try post without api key
+    // const result = await fetch('/storage', {method: 'post', body: JSON.stringify({'did': '123'}), headers: {'x-api-key': 'bob'}})
+    // console.log(result);
 
     // getFile(decrypted!);
     // // getBase64(decrypted)
