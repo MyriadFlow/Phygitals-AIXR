@@ -48,7 +48,7 @@ export async function POST(request:Request) {
   const body = await request.json();
   const delegation = await backend(body.did);
 
-  return new Response(delegation, {
+  return new Response(Buffer.from(delegation!).toString('base64'), {
     status: 200
   })
 }
