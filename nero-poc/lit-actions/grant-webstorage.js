@@ -18,12 +18,12 @@ const code = `(async () => {
     chain,
   });
 
-  const resp = await fetch(url, { method: "POST", body: { did }, headers:{'x-api-key': apiKey} });
+  const resp = await fetch(url, { method: "POST", body: JSON.stringify({ did }), headers:{'x-api-key': apiKey} });
 
   console.log('called endpoint using api key and received delegation response', apiKey, url);
 
-
-  Lit.Actions.setResponse({ response: await resp.json() });
+  console.log(await resp.text(), '<');
+  Lit.Actions.setResponse({ response: 'hello world' });
 })()`;
 
 export default code;
