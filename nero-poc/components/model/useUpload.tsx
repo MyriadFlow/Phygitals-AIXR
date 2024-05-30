@@ -19,7 +19,7 @@ const VisuallyHiddenInput = styled('input')({
 type UseUploadProps = {
   accepts: string;
   shouldEncrypt?: boolean;
-  fileSelected: (file:File) => void;
+  fileSelected: (file: File) => void;
   file?: File;
 }
 
@@ -89,7 +89,6 @@ export default function useUpload(props: UseUploadProps) {
     //   return <Button variant='contained' onClick={checkAuth}>Sign With Eth</Button>;
     return <div><Button
       component="label"
-      role={undefined}
       variant="contained"
       tabIndex={-1}
       startIcon={<CloudUploadIcon />}

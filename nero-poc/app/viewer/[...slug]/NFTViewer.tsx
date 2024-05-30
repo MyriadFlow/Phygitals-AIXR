@@ -48,6 +48,8 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
   const [buyStatus, setBuyStatus] = useState({ message: '', status: 0 });
   const [txnHash, setTxnHash] = useState('');
 
+  const [unlocking, setUnlocking] = useState(false);
+
   const chainId = useChainId();
 
   const [modelSource, setModelSource] = useState('');
@@ -55,7 +57,7 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
   // const context = useContext(NFTContext);
   const { data: walletClient } = useWalletClient({ chainId });
 
-  const {decryptData, executeLitAction} = useLitLibrary();
+  const { decryptData, executeLitAction } = useLitLibrary();
 
   const contracts = [
     {
@@ -120,12 +122,20 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     }
   ] as any
 
-  if (tokenId !== 0 && tokenId !== undefined && tokenId >= 0) {
+  if (tokenId !== undefined && tokenId >= 0) {
     contracts.push(
       {
         abi: nero.abi,
         address,
         functionName: 'ownerOf',
+        chainId: sepolia.id,
+        args: [tokenId || 0]
+      },);
+    contracts.push(
+      {
+        abi: nero.abi,
+        address,
+        functionName: 'scoreboard',
         chainId: sepolia.id,
         args: [tokenId || 0]
       },);
@@ -209,6 +219,7 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     if (!metadata) {
       return;
     }
+    setUnlocking(true);
     const resp = await fetch(metadata.avatar.unlocked).then((response) => response.json()); // json gives us the ciphertext and hash for data
 
     console.log(resp);
@@ -218,6 +229,27 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     console.log(decrypt);
 
     setModelSource(getFile(decrypt, 'octet/stream'));
+    setUnlocking(false);
+  }
+
+  async function unlockKnowledge() {
+    if (!metadata) {
+      return;
+    }
+
+    if (!metadata.knowledge.private || metadata.knowledge.private.length === 0) {
+      return;
+    }
+
+    setUnlocking(true);
+
+    try {
+      const result = await executeLitAction(address, code, { url: metadata.knowledge.private })
+      console.log(result);
+    }
+    finally {
+      setUnlocking(false);
+    }
   }
 
   const statusMessage = useMemo(() => {
@@ -318,20 +350,23 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
   console.log(modelSource);
 
   return <Container maxWidth="lg">
-  <w3m-button />
-  <Grid container>
-    <Grid item xs={6} height={"600px"}>
-      <Model src={modelSource} />
+    <w3m-button />
+    <Grid container>
+      <Grid item xs={6} height={"600px"}>
+        <Model src={modelSource} />
+      </Grid>
+      <Grid item xs={6}>
+        <Typography variant='h4'>{results.data?.[3] as string} # {tokenId}</Typography>
+        <Typography variant='body1'>{metadata && metadata.description}</Typography>
+        Owner - {results.data[10] as string}
+        {supply}
+        {traits}
+        <Box gap={3} display={"flex"} marginY={2}>
+          <Button variant="contained" onClick={unlockAvatar} disabled={unlocking}>Unlock Token</Button>
+          <Button variant="contained" onClick={unlockKnowledge} disabled={unlocking}>Unlock Knowledge</Button>
+        </Box>
+        {statusMessage}
+      </Grid>
     </Grid>
-    <Grid item xs={6}>
-      <Typography variant='h4'>{results.data?.[3] as string} # {tokenId}</Typography>
-      <Typography variant='body1'>{metadata && metadata.description}</Typography>
-      Owner - {results.data[8] as string}
-      {supply}
-      {traits}
-      <Button variant="contained" onClick={unlockAvatar} disabled={buying}>Unlock Token</Button>
-      {statusMessage}
-    </Grid>
-  </Grid>
-</Container>
+  </Container>
 }

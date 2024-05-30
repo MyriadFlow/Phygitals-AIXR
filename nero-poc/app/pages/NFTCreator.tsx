@@ -11,6 +11,7 @@ import ConnectNextButton from '@/components/connect/ConnectNextButton';
 import TokenPanel from '@/components/token/TokenPanel';
 import NFTContext from '@/lib/context/NFTContext';
 import ReviewPanel from '@/components/review/Review';
+import useLitLibrary from '@/lib/hooks/useLitLibrary';
 
 export default function NFTCreator() {
   const [step, setStep] = useState(0);
@@ -20,6 +21,8 @@ export default function NFTCreator() {
   const [message, setMessage] = useState('');
 
   const [contractAddress, setContractAddress] = useState('');
+
+  const {testEnc} = useLitLibrary();
 
   function appendMessage(msg: string) {
     console.log(msg);
@@ -89,6 +92,7 @@ export default function NFTCreator() {
         {step === 4 && contractAddress.length === 0 && <Button variant='contained' color='error' disabled={!context.stepsValid() || minting} onClick={mintNFT}>{minting ? "Minting ..." : "Mint NFT"}</Button>}
         {step === 4 && contractAddress.length > 0 && <Button variant='contained' color='success' disabled={!context.stepsValid() || minting} onClick={() => window.open('https://sepolia.etherscan.io/address/' + contractAddress)}>View on Etherscan</Button>}
         {step === 4 && contractAddress.length > 0 && <Button color='success' disabled={!context.stepsValid() || minting} onClick={() => window.open('/viewer/' + contractAddress)}>View NFT</Button>}
+        <Button color='success' onClick={() => testEnc()}>Test</Button>
         <div className='flex-1'><w3m-button/></div>
 
       </div>

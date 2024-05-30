@@ -1,13 +1,5 @@
-(async () => {
-  const testResult = await Lit.Actions.checkConditions({conditions, authSig, chain})
-
-  console.log('testResult', testResult)
-
-  // only grant storage request (3 minutes) to the DID if they pass the conditional checks of our code
-  if (!testResult){
-    return;
-  }
-
+const code = `(async () => {
+  
   // hidden endpoint
   const url = await Lit.Actions.decryptAndCombine({
     accessControlConditions,
@@ -31,4 +23,6 @@
   console.log('called endpoint using api key and received delegation response');
   
   Lit.Actions.setResponse({response: resp});
-})();
+})();`;
+
+export default code;

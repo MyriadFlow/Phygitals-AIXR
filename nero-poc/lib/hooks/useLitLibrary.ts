@@ -4,7 +4,12 @@ import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { AuthSig } from '@lit-protocol/types';
 import { LitNetwork } from "@lit-protocol/constants";
 import { genSession } from '../lit/session';
-
+import {
+  LitActionResource,
+  LitAccessControlConditionResource,
+  LitAbility,
+} from '@lit-protocol/auth-helpers';
+import code from '@/lit-actions/unlock-token-content';
 export default function useLitLibrary() {
   const [client, setClient] = useState<LitJsSdk.LitNodeClient>();
   const [authSig, setAuthSig] = useState<AuthSig>();
@@ -29,7 +34,25 @@ export default function useLitLibrary() {
     return accessControlConditions;
   }
 
-  async function executeLitAction(contractAddress: string, code: string) {
+  function getAccessControlConditions2() {
+    const accessControlConditions = [
+      {
+        contractAddress: "",
+        standardContractType: "",
+        chain: "sepolia",
+        method: "eth_getBalance",
+        parameters: [":userAddress", "latest"],
+        returnValueTest: {
+          comparator: ">=",
+          value: "0", // 0 ETH
+        },
+      },
+    ];
+
+    return accessControlConditions;
+  }
+
+  async function executeLitAction(contractAddress: string, code: string, args?: any) {
     let litNodeClient = client;
 
     if (!litNodeClient) {
@@ -43,11 +66,21 @@ export default function useLitLibrary() {
     }
     const accessControlConditions = getAccessControlConditions(contractAddress);
 
+    console.log(args);
+
     const res = await litNodeClient.executeJs({
       code,
-      sessionSigs: sig, //await genSession(litNodeClient, [], sig), // your session
+      sessionSigs: await genSession(litNodeClient, [{
+        resource: new LitActionResource('*'),
+        ability: LitAbility.LitActionExecution,
+      },
+      {
+        resource: new LitAccessControlConditionResource('*'),
+        ability: LitAbility.AccessControlConditionDecryption,
+      }]), // your session
       jsParams: {
-        accessControlConditions
+        accessControlConditions,
+        ...args
       }
     });
 
@@ -55,19 +88,25 @@ export default function useLitLibrary() {
   }
 
   async function getLitNodeClient() {
-    console.log('get client');
+    console.log('get client', client);
+    if (client) {
+      return client;
+    }
     // Initialize LitNodeClient
+    // LitJsSdk.disconnectWeb3();
     const litNodeClient = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: false,
       litNetwork: LitNetwork.Cayenne,
       debug: true
     });
+
     await litNodeClient.connect();
+    console.log(litNodeClient);
     setClient(litNodeClient);
     return litNodeClient;
   }
 
-  async function encryptData(dataToEncrypt: string, contractAddress: string) {
+  async function encryptData(dataToEncrypt: string, contractAddress?: string) {
     let litNodeClient = client;
     if (!litNodeClient) {
       litNodeClient = await getLitNodeClient();
@@ -76,7 +115,7 @@ export default function useLitLibrary() {
     if (!authSig) {
       sig = await connect();
     }
-    const accessControlConditions = getAccessControlConditions(contractAddress);
+    const accessControlConditions = !contractAddress ? getAccessControlConditions2() : getAccessControlConditions(contractAddress);
     // 1. Encryption
     // <Blob> encryptedString
     // <Uint8Array(32)> dataToEncryptHash
@@ -84,15 +123,15 @@ export default function useLitLibrary() {
       {
         accessControlConditions,
         dataToEncrypt: dataToEncrypt,
-        chain: "sepolia",
-        authSig: sig
+        // chain: "sepolia",
+        // authSig: sig
       },
       litNodeClient
     );
     return [ciphertext, dataToEncryptHash];
   }
 
-  async function encryptFile(fileToEncrypt: File, contractAddress: string) {
+  async function encryptFile(fileToEncrypt: File, contractAddress?: string) {
     let litNodeClient = client;
     if (!litNodeClient) {
       litNodeClient = await getLitNodeClient();
@@ -101,7 +140,7 @@ export default function useLitLibrary() {
     if (!authSig) {
       sig = await connect();
     }
-    const accessControlConditions = getAccessControlConditions(contractAddress);
+    const accessControlConditions = !contractAddress ? getAccessControlConditions2() : getAccessControlConditions(contractAddress);
     // 1. Encryption
     // <Blob> encryptedString
     // <Uint8Array(32)> dataToEncryptHash
@@ -120,7 +159,7 @@ export default function useLitLibrary() {
   async function decryptData(
     ciphertext: string,
     dataToEncryptHash: string,
-    contractAddress: string
+    contractAddress?: string
   ) {
     const litNodeClient = await getLitNodeClient();
     let sig = authSig;
@@ -135,7 +174,7 @@ export default function useLitLibrary() {
       decryptedString = await LitJsSdk.decryptToFile(
         {
           authSig: sig,
-          accessControlConditions: getAccessControlConditions(contractAddress),
+          accessControlConditions: !contractAddress ? getAccessControlConditions2() : getAccessControlConditions(contractAddress),
           ciphertext,
           dataToEncryptHash,
           chain: "sepolia",
@@ -150,13 +189,98 @@ export default function useLitLibrary() {
     return decryptedString;
   }
 
-  const connect = async () => {
-    console.log('auth stuff');
-    const litNodeClient = await getLitNodeClient();
+  const testEncData = async (message: string, sessionSigs: any, litNodeClient: any) => {
+    const { ciphertext, dataToEncryptHash } = await LitJsSdk.encryptString(
+      {
+        accessControlConditions: getAccessControlConditions2(),
+        // chain: "sepolia",
+        dataToEncrypt: message,
+        // sessionSigs,
+      },
+      litNodeClient,
+    );
+    return {
+      ciphertext,
+      dataToEncryptHash,
+    };
+  }
+
+  const testDecData = async (ciphertext: string, dataToEncryptHash: string, sessionSigs: any, litNodeClient:any) => {
     const authSig = await checkAndSignAuthMessage({
       chain: "sepolia",
       nonce: await litNodeClient.getLatestBlockhash(),
     });
+    const res = await litNodeClient.executeJs({
+      sessionSigs,
+      code: code,
+      jsParams: {
+        accessControlConditions: getAccessControlConditions('0xa76cebf510409b2e504a47918a345ee3cb78dc23'),
+        ciphertext,
+        dataToEncryptHash,
+        sessionSigs,
+        authSig,
+        url: "https://bafkreibnpyf4nyoy62ieaw7wqj4ysxcsuy5dw5kuxoxhu2eruofumdf3mq.ipfs.w3s.link"
+
+      }
+    })
+
+    console.log("result from action execution: ", res);
+
+    return res.response;
+  }
+
+  const testEnc = async () => {
+    console.log('testing enc stuff');
+    const litNodeClient = await getLitNodeClient();
+
+    const sessionSigs = await genSession(litNodeClient, [
+      {
+        resource: new LitActionResource('*'),
+        ability: LitAbility.LitActionExecution,
+      },
+      {
+        resource: new LitAccessControlConditionResource('*'),
+        ability: LitAbility.AccessControlConditionDecryption,
+      }
+    ])
+
+    // console.log(authSig);
+    const messageToEncrypt = "Victa is awesome";
+
+
+    const {ciphertext, dataToEncryptHash} = await testEncData(messageToEncrypt, sessionSigs, litNodeClient);
+
+    console.log('ciper done');
+
+    const decrypted = await decryptData(ciphertext, dataToEncryptHash);
+
+    console.log(decrypted);
+
+
+    const decrypted2 = await testDecData(ciphertext, dataToEncryptHash, sessionSigs, litNodeClient);
+
+    console.log(decrypted2);
+
+    // try post without api key
+    const result = await fetch('/storage', {method: 'post', body: JSON.stringify({'did': '123'}), headers: {'x-api-key': 'bob'}})
+    console.log(result);
+
+    // getFile(decrypted!);
+    // // getBase64(decrypted)
+
+    return authSig;
+  }
+
+  const connect = async () => {
+    console.log('auth stuff');
+    const litNodeClient = await getLitNodeClient();
+
+    const authSig = await checkAndSignAuthMessage({
+      chain: "sepolia",
+      nonce: await litNodeClient.getLatestBlockhash(),
+    });
+
+
 
     // console.log(authSig);
     // const messageToEncrypt = "Victa is awesome";
@@ -185,6 +309,7 @@ export default function useLitLibrary() {
     encryptData,
     decryptData,
     executeLitAction,
+    testEnc
   }
 
 }

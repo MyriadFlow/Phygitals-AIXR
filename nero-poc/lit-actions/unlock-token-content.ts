@@ -1,25 +1,28 @@
 const code = `(async () => {
-  const testResult = await Lit.Actions.checkConditions({conditions, authSig, chain})
+  // const testResult = await Lit.Actions.checkConditions({accessControlConditions, authSig})
 
-  console.log('testResult', testResult)
+  // console.log('testResult', testResult)
 
-  if (!testResult){
-    return;
-  }
+  // if (!testResult){
+  //   Lit.Actions.setResponse({response: 'failed'})
+  //   return;
+  // }
 
   const resp = await fetch(url).then((response) => response.json()); // json gives us the ciphertext and hash for data
 
-  
-  // hidden endpoint
+  console.log('hello, world');
+  console.log(resp);
+  // // hidden endpoint
   const data = await Lit.Actions.decryptAndCombine({
     accessControlConditions,
-    ciphertext: resp.ciphertext,
-    dataToEncryptHash: resp.dataToEncryptHash,
-    authSig: null,
-    chain,
+          chain: "sepolia",
+          ciphertext: resp.ciphertext,
+          dataToEncryptHash: resp.dataToEncryptHash,
+          authSig,
+          sessionSigs
   });
   
   Lit.Actions.setResponse({response: data});
-})();`;
+})()`;
 
 export default code;
