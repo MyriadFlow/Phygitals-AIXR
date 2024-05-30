@@ -22,7 +22,11 @@ const code = `(async () => {
 
   console.log('called endpoint using api key and received delegation response', apiKey, url);
 
-  Lit.Actions.setResponse({ response: resp.text() });
+  const response = await resp.text();
+
+  console.log(response, '<<');
+
+  Lit.Actions.setResponse({ response: response });
 })()`;
 
 export default code;
