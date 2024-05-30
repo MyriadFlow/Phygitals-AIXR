@@ -6,8 +6,8 @@ import { supabase } from "../lib/supabaseClient";
 interface Avatar {
   id: string;
   glb_url: string;
-  thumbnail_url: string;
-  traits: Record<string, any>;
+  image_url: string;
+  attributes: Record<string, any>;
 }
 
 export default function Page() {
@@ -34,8 +34,8 @@ export default function Page() {
             key={avatar.id}
             className="border rounded-lg p-4 shadow-lg bg-white"
           >
-            <Image
-              src={avatar.thumbnail_url}
+            <img
+              src={avatar.image_url}
               alt="Avatar"
               sizes="500px"
               style={{
@@ -47,7 +47,7 @@ export default function Page() {
               className="rounded-md"
             />
             <pre className="text-left bg-gray-100 p-2 rounded-md text-primary-dark">
-              {JSON.stringify(avatar.traits, null, 2)}
+              {JSON.stringify(avatar.attributes, null, 2)}
             </pre>
           </div>
         ))}
