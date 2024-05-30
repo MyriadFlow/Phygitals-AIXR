@@ -5,10 +5,10 @@ import { useAccount } from 'wagmi';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import SetupAvatar from '../setup-avatar/page';
+import SetupAvatar from '../ui/SetupAvatar';
 import { generateThumbnail } from '../utils/generateThumbnail';
 
-export default function LaunchPage() {
+export default function Page() {
   const { address } = useAccount();
   const [avatar, setAvatar] = useState<any>(null);
   const [loading, setLoading] = useState(false);

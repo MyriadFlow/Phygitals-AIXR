@@ -11,7 +11,7 @@ interface Avatar {
   attributes: Record<string, any>;
 }
 
-export default function DashboardPage() {
+export default function Page() {
   const { address } = useAccount();
   const [avatars, setAvatars] = useState<Avatar[]>([]);
 
