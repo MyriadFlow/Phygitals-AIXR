@@ -28,7 +28,7 @@ const NFTProvider = ({ children }: any) => {
   const [totalSupply, setTotalSupply] = useState<number>(1000);
 
   const [publicAgentKnowledge, setPublicAgentKnowledge] = useState<string>(`Lexi, renowned street dancer and fashion designer, had often surveyed her muse high above the city's pulsing heart. Below, a human kaleidoscope mirrored her own passion: cars streamed with the fluidity of a b-boy freeze, pedestrians weaved through the concrete jungle with practiced grace, and the distant thump of bass vibrated like a breaking beat. This urban symphony had always been her lifeblood, fueling "Concrete Rhythm," her thriving clothing brand. From the day she first defied gravity on cracked pavement, the city and her dance had intertwined. Every sharp turn inspired a bold graphic tee, every burst of color whispered the secrets of flowing movement in sweatpants. Now, this latest collection was the culmination of that fusion. It wasn't just clothes – it was a limited edition line of sneakers. Sleek, futuristic kicks built for conquering concrete battlegrounds, each step a statement. They embodied both the agility of Lexi's moves and the city's unwavering spirit. Lexi, the self-made artist who found her rhythm where concrete met movement, was about to unleash her masterpiece.`);
-  const [privateAgentKnowledge, setPrivateAgentKnowledge] = useState<string>(`Lexi, renowned street dancer and fashion designer, had often surveyed her muse high above the city's pulsing heart. Below, a human kaleidoscope mirrored her own passion: cars streamed with the fluidity of a b-boy freeze, pedestrians weaved through the concrete jungle with practiced grace, and the distant thump of bass vibrated like a breaking beat. This urban symphony had always been her lifeblood, fueling "Concrete Rhythm," her thriving clothing brand. From the day she first defied gravity on cracked pavement, the city and her dance had intertwined. Every sharp turn inspired a bold graphic tee, every burst of color whispered the secrets of flowing movement in sweatpants. Now, this latest collection was the culmination of that fusion. It wasn't just clothes – it was a limited edition line of sneakers. Sleek, futuristic kicks built for conquering concrete battlegrounds, each step a statement. They embodied both the agility of Lexi's moves and the city's unwavering spirit. Lexi, the self-made artist who found her rhythm where concrete met movement, was about to unleash her masterpiece.`);
+  const [privateAgentKnowledge, setPrivateAgentKnowledge] = useState<string>(`This is private data for Lexi!.`);
   const [tokenPrice, setTokenPrice] = useState(0);
   const { encryptFile, encryptData, requestWeb3Storage } = useLitLibrary();
 
@@ -72,10 +72,10 @@ const NFTProvider = ({ children }: any) => {
 
     try {
 
-      const avatarURI = getLink((await uploadFile(avatar!))!.toString());
       update('1. Deploying smart contract ' + name);
       const contractAddress = await deploy721A(name, symbol, totalSupply, tokenPrice, bronzeLevel, silverLevel, goldLevel);
       update(`1.1 Smart contract deployed at ${contractAddress}`);
+      const avatarURI = getLink((await uploadFile(avatar!))!.toString());
       update('2. Uploading avatar and background images to IPFS');
       const backgroundURI = getLink((await uploadFile(background!))!.toString());
       setAvatarURI(avatarURI);
