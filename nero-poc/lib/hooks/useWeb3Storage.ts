@@ -3,7 +3,7 @@ import { useState } from 'react'
 import * as Delegation from '@ucanto/core/delegation';
 import { BlobLike } from '@web3-storage/w3up-client/types';
 
-export default function useWeb3Storage() {
+export default function useWeb3Storage(requestWeb3Storage: (did:string) => Promise<Buffer>) {
   const [account, setAccount] = useState<Client>();
   const [lastDelegation, setLastDelegation] = useState(0);
 
@@ -14,14 +14,13 @@ export default function useWeb3Storage() {
     }
     const acc = await create();
     setAccount(acc);
-    const apiUrl = `/storage`;
-    const response = await fetch(apiUrl, {
-      body: JSON.stringify({did: acc.agent.did()}),
-      method: 'POST',
-    });
+    // const apiUrl = `/storage`;
+    // const response = await fetch(apiUrl, {
+    //   body: JSON.stringify({did: acc.agent.did()}),
+    //   method: 'POST',
+    // });
 
-    const data = await response.arrayBuffer()
-    
+    const data = await requestWeb3Storage(acc.agent.did()); // response.arrayBuffer()
     const del = await Delegation.extract(new Uint8Array(data));
 
     if (!del.ok) {
