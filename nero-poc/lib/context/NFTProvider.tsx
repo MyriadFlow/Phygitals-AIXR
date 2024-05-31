@@ -72,10 +72,11 @@ const NFTProvider = ({ children }: any) => {
 
     try {
 
+      const avatarURI = getLink((await uploadFile(avatar!))!.toString());
+      console.log('avatar uri is', avatarURI);
       update('1. Deploying smart contract ' + name);
       const contractAddress = await deploy721A(name, symbol, totalSupply, tokenPrice, bronzeLevel, silverLevel, goldLevel);
       update(`1.1 Smart contract deployed at ${contractAddress}`);
-      const avatarURI = getLink((await uploadFile(avatar!))!.toString());
       update('2. Uploading avatar and background images to IPFS');
       const backgroundURI = getLink((await uploadFile(background!))!.toString());
       setAvatarURI(avatarURI);
