@@ -1,3 +1,24 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap"); /* Add a font import */
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.bg-hero-pattern {
+  background-image: url("/hero-image.webp"), linear-gradient(to bottom right, #1A1B41, #3D0E6F); /* Add gradient to hero section */
+  background-blend-mode: overlay;
+}
+
+@keyframes gradient-x {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 15s ease infinite;
+}

@@ -1,35 +1,42 @@
-import Image from 'next/image';
-import heroImage from '../../public/hero-image.webp';
+"use client";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
-export default function Hero() {
+export default function HeroSection() {
   return (
-    <div className="relative bg-gradient-to-r from-purple-600 to-blue-500 py-20 md:py-40">
-      <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center">
-        {/* Text Container */}
-        <div className="md:w-1/2 text-center md:text-left md:order-1">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Empower Your Brand with AI-Powered NFTs
-          </h1>
-          <p className="text-lg md:text-xl text-white mb-8">
-            Create, launch, and manage unique NFT avatars and virtual environments to build thriving communities and monetize your brand.
-          </p>
-          <button className="bg-white text-purple-600 font-bold py-2 px-4 rounded hover:bg-opacity-90 transition duration-300">
+    <section className="relative h-screen flex items-center justify-center text-center overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-pink-900 via-purple-900 to-pink-900 animate-gradient-x"></div>
+      <div className="particle-container"></div>
+      <div className="relative z-10 mx-8 mb-16">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl md:text-7xl font-extrabold text-white mb-4 font-orbitron" // Futuristic font
+        >
+          Empower Your Brand <br /> with AI-Powered NFTs
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-xl md:text-2xl text-white mb-8 text-shadow" // Text shadow
+        >
+          Discover, create, and trade phygital NFTs with AI-powered avatars
+        </motion.p>
+        <Link href="https://nero-marketplace.on-fleek.app/" target="_blank">
+          <motion.button
+            whileHover={{
+              scale: 1.1,
+              boxShadow: "0px 0px 20px rgba(255, 255, 255, 0.8)",
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            className="bg-accent hover:bg-secondary text-white font-extrabold py-3 px-8 rounded-full text-lg md:text-xl"
+          >
             Launch Your Brand
-          </button>
-        </div>
-        {/* Image Container */}
-        <div className="md:w-1/2 order-1 md:order-2 mt-8 md:mt-0 md:ml-8">
-          <Image
-            src={heroImage}
-            alt="Hero Image"
-            width={720}
-            height={540}
-            className="shadow-lg rounded-md max-w-full h-auto"
-          />
-        </div>
+          </motion.button>
+        </Link>
       </div>
-      {/* Gradient Overlay */}
-      <div className="absolute bottom-0 right-0 w-full md:w-1/2 h-1/2 bg-gradient-to-t from-blue-500 to-transparent animate-pulse opacity-50"></div>
-    </div>
+    </section>
   );
 }
