@@ -87,7 +87,7 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     {
       abi: nero.abi,
       address,
-      functionName: 'symbol',
+      functionName: 'owner',
       chainId: sepolia.id
     },
     {

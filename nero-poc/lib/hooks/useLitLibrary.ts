@@ -233,6 +233,57 @@ export default function useLitLibrary() {
     return res.response;
   }
 
+  const requestWeb3Storage = async (did: string) => {
+    const api_url_ciphertext = process.env.NEXT_PUBLIC_API_URL_CIPHERTEXT;
+    const api_url_datatoencrypthash = process.env.NEXT_PUBLIC_API_URL_DATA_TO_ENCRYPT_HASH;
+
+    const api_key_ciphertext = process.env.NEXT_PUBLIC_API_KEY_CIPHERTEXT;
+    const api_key_datatoencrypthash = process.env.NEXT_PUBLIC_API_KEY_DATA_TO_ENCRYPT_HASH;
+
+    const litNodeClient = await getLitNodeClient();
+
+    console.log('starting to request web3 storage credentials through lit actions');
+
+    const authSig = await checkAndSignAuthMessage({
+      chain: "sepolia",
+      nonce: await litNodeClient.getLatestBlockhash(),
+    });
+
+    const sessionSigs = await genSession(litNodeClient, [
+      {
+        resource: new LitActionResource('*'),
+        ability: LitAbility.LitActionExecution,
+      },
+      {
+        resource: new LitAccessControlConditionResource('*'),
+        ability: LitAbility.AccessControlConditionDecryption,
+      }
+    ]);
+
+    console.log('execute js using encrypted api key and url to hide details of where user gets granted information');
+
+    const res = await litNodeClient.executeJs({
+      sessionSigs,
+      code: code,
+      jsParams: {
+        accessControlConditions: getAccessControlConditions2(),
+        ciphertext: api_url_ciphertext,
+        dataToEncryptHash: api_url_datatoencrypthash,
+        apiciphertext: api_key_ciphertext,
+        apidatatoencrypthash: api_key_datatoencrypthash,
+        sessionSigs,
+        authSig,
+        chain: "sepolia",
+        did
+
+      }
+    });
+
+    console.log('result is retrieved from the lit action');
+
+    return Buffer.from(res.response.toString(), "base64");
+  }
+
   const testEnc = async () => {
     console.log('testing enc stuff');
     const litNodeClient = await getLitNodeClient();
@@ -249,14 +300,18 @@ export default function useLitLibrary() {
     ])
 
     // console.log(authSig);
-    const messageToEncrypt = "130170db5009ee961e5c334b408456c0c57b0c2dee1ee86f0bdc8f41c89649218c8286713937e07930fcc242b59eefae1215692c550aba1c94dcf268dfa06d7b";
+    const messageToEncrypt = "12345";
     console.log('encrypting api key');
 
     const {ciphertext, dataToEncryptHash} = await testEncData(messageToEncrypt, sessionSigs, litNodeClient);
 
+    console.log('api key ciphertext and data to encrypt', ciphertext, dataToEncryptHash);
+
     console.log('encrypting storage grant api (filecoin)');
-    const messageToEncrypt2 = "https://nero-fs.netlify.app/storage";
+    const messageToEncrypt2 = "website";
     const {ciphertext: ct2, dataToEncryptHash: dt2} = await testEncData(messageToEncrypt2, sessionSigs, litNodeClient);
+
+    console.log('url cipertext and data to encrypt', ct2, dt2);
 
     // try to delegate storage using grant webstorage action
 
@@ -324,7 +379,8 @@ export default function useLitLibrary() {
     encryptData,
     decryptData,
     executeLitAction,
-    testEnc
+    testEnc,
+    requestWeb3Storage
   }
 
 }
