@@ -13,11 +13,13 @@ const useFetchData = (id) => {
 			setError(null)
 
 			try {
-				const response = await fetch(`http://localhost:3000/api/products/${id}`)
+				const result = await prisma.product.findUnique({
+					where: { id: parseInt(id) },
+				})
 				if (!response.ok) {
 					throw new Error('Network response was not ok')
 				}
-				const result = await response.json()
+
 				setData(result)
 			} catch (err) {
 				setError(err.message)

@@ -1,11 +1,7 @@
 'use client'
 import { VoiceRecorder } from '@/components/ui/voice-recorder'
-import { Speech } from '@/utils/speechSynthesis'
 
-import { Metacard } from '@/components/ui/meta-card'
-import { AframeContainer } from '@/components/ui/aframe-container'
 import useFetchData from '@/hooks/useFetchData'
-import { AvatarContainer } from '../../../components/ui/avatar-container'
 import {
 	Card,
 	CardContent,
@@ -31,44 +27,6 @@ export default function Collection({ params }) {
 
 	if (error) {
 		return <div>Error: {error}</div>
-	}
-
-	const displayText = async () => {
-		console.log('Media' + media)
-
-		const data = {
-			providers: ['openai'],
-			language: 'en',
-			file_url: media,
-			speakers: 2,
-			profanity_filter: false,
-			convert_to_wav: false,
-		}
-
-		const options = {
-			method: 'POST',
-
-			headers: {
-				Authorization: `Bearer ${TOKEN}`,
-				accept: 'application/json',
-				'content-type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		}
-
-		try {
-			const res = await fetch(
-				'https://api.edenai.run/v2/audio/speech_to_text_async',
-				options
-			)
-			const data = await res.json()
-
-			setConvertedText(data?.results?.openai.text)
-
-			localStorage.setItem('Texts', JSON.stringify(data?.results?.openai))
-		} catch (error) {
-			console.log('error' + error)
-		}
 	}
 
 	const modelAttributes = data.attributes[0]
@@ -135,7 +93,9 @@ export default function Collection({ params }) {
 				<div className='flex gap-1 items-start  h-[78vh]'>
 					<Avatar
 						modelSrc={data.external_url}
-						animationSrc={showAnimationList && currentAnimation}
+						animationSrc={
+							'https://models.readyplayer.me/664b7de7c48ec50b6c8d41c8.glb'
+						}
 						cameraInitialDistance={3.5}
 					/>
 					{!unlock ? (
@@ -167,7 +127,7 @@ export default function Collection({ params }) {
 			</div>
 			<div className='absolute bottom-12 left-[30%]'>
 				<p className='text-center font-bold '>Click on the mic icon to speak</p>
-				{/* <VoiceRecorder /> */}
+				<VoiceRecorder />
 			</div>
 		</main>
 	)
