@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body {
+    @apply text-gray-900 dark:text-gray-100 bg-background-light dark:bg-background-dark;
+  }
+  
+  a {
+    @apply transition-colors duration-300;
+  }
+  
+  .nav-item {
+    @apply text-gray-800 dark:text-primary-light hover:text-blue-500 dark:hover:text-secondary;
+  }

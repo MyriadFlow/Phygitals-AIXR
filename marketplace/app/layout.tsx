@@ -26,8 +26,8 @@ export default function RootLayout({
           <main className="flex-grow">
             <Header />
             {children}
-            <Footer />
           </main>
+          <Footer />
         </Web3ModalProvider>
       </body>
     </html>
