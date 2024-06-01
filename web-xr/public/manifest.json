@@ -1,0 +1,7 @@
+{
+	"name": "Nero fs phygitals",
+	"short_name": "phygital",
+	"start_url": "/",
+	"display": "standalone",
+	"orientation": "portrait"
+}

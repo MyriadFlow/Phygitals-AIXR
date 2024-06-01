@@ -1,0 +1,79 @@
+{
+	"products": [
+		{
+			"description": "Lexi, renowned street dancer and fashion designer, had often surveyed her muse high above the city's pulsing heart. Below, a human kaleidoscope mirrored her own passion: cars streamed with the fluidity of a b-boy freeze, pedestrians weaved through the concrete jungle with practiced grace, and the distant thump of bass vibrated like a breaking beat. This urban symphony had always been her lifeblood, fueling \"Concrete Rhythm,\" her thriving clothing brand. From the day she first defied gravity on cracked pavement, the city and her dance had intertwined. Every sharp turn inspired a bold graphic tee, every burst of color whispered the secrets of flowing movement in sweatpants. Now, this latest collection was the culmination of that fusion. It wasn't just clothes – it was a limited edition line of sneakers. Sleek, futuristic kicks built for conquering concrete battlegrounds, each step a statement. They embodied both the agility of Lexi's moves and the city's unwavering spirit. Lexi, the self-made artist who found her rhythm where concrete met movement, was about to unleash her masterpiece.",
+			"external_url": "<our url link to show the NFT in the glb viewer>",
+			"image_url": "<glb file uploaded to filecoin>",
+			"video_url": "<video file uploaded to filecoin>",
+			"name": "Concrete Rhythm Lexi Sneakers",
+			"locked_features": false,
+			"gender": "Female",
+			"attributes": [
+				{
+					"trait_type": "Animation",
+					"value": ["<animation_url_1>", "<animation_url_2>"]
+				}
+			]
+		},
+		{
+			"description": "Dante, a prolific graffiti artist and skateboarder, saw the city's architecture as his canvas and playground. His art, vibrant and rebellious, painted the urban landscape with a spectrum of emotions. Skating through alleys and over rails, he envisioned his designs coming to life. His brand, \"Urban Echo,\" captured this spirit. Each hoodie bore the intensity of a midnight spray session, and each pair of jeans echoed the grind of concrete under wheels. Dante's latest venture was a collection of graffiti-inspired jackets, each telling a story of the city's hidden corners. These limited edition jackets combined durable, street-ready materials with striking designs, perfect for those who lived and breathed urban art. The collection represented not just clothing but wearable masterpieces that reflected the soul of the city. Dante's journey from anonymous tagger to acclaimed designer had come full circle, and he was ready to share his vision with the world.",
+			"external_url": "<our url link to show the NFT in the glb viewer>",
+			"image_url": "<glb file uploaded to filecoin>",
+			"video_url": "<video file uploaded to filecoin>",
+			"name": "Urban Echo Dante Jackets",
+			"locked_features": true,
+			"gender": "Male",
+			"attributes": [
+				{
+					"trait_type": "Animation",
+					"value": ["<animation_url_1>", "<animation_url_2>"]
+				}
+			]
+		},
+		{
+			"description": "Maya, an accomplished parkour athlete and environmental artist, viewed the city's rooftops as her gallery and gym. Every leap and roll across the skyline fueled her creativity for \"Skyline Flow,\" her eco-friendly apparel line. Her designs reflected the seamless blend of nature and urban sprawl, inspired by the flora that thrived amidst steel and stone. This season's highlight was a series of high-performance, sustainable jumpsuits. Tailored for both agility and style, these jumpsuits embodied the freedom of movement and the commitment to environmental consciousness. Each piece, crafted from recycled materials, showcased Maya's dual passions. From rooftops to runways, her collection bridged the gap between athleticism and artistry, marking a new era in urban fashion.",
+			"external_url": "<our url link to show the NFT in the glb viewer>",
+			"image_url": "<glb file uploaded to filecoin>",
+			"video_url": "<video file uploaded to filecoin>",
+			"name": "Skyline Flow Maya Jumpsuits",
+			"locked_features": false,
+			"gender": "Female",
+			"attributes": [
+				{
+					"trait_type": "Animation",
+					"value": ["<animation_url_1>", "<animation_url_2>"]
+				}
+			]
+		},
+		{
+			"description": "Kai, a visionary digital artist and DJ, transformed the city's nightlife with his hypnotic visuals and beats. His interactive installations, a fusion of light and sound, turned ordinary spaces into immersive experiences. His brand, \"Neon Pulse,\" captured this electrifying essence. The latest drop featured a collection of LED-embedded jackets and hoodies, each synchronized with music to create a living light show. These wearable art pieces, perfect for the dance floor or the streets, merged fashion with technology. Kai's creations weren't just garments; they were gateways to a multi-sensory journey, embodying the pulse of the city and the energy of its inhabitants. As he prepared to unveil this groundbreaking collection, Kai knew he was pushing the boundaries of what fashion could be.",
+			"external_url": "<our url link to show the NFT in the glb viewer>",
+			"image_url": "<glb file uploaded to filecoin>",
+			"video_url": "<video file uploaded to filecoin>",
+			"name": "Neon Pulse Kai Jackets",
+			"locked_features": true,
+			"gender": "Male",
+			"attributes": [
+				{
+					"trait_type": "Animation",
+					"value": ["<animation_url_1>", "<animation_url_2>"]
+				}
+			]
+		},
+		{
+			"description": "Zara, a celebrated choreographer and contemporary dancer, drew inspiration from the rhythmic patterns of city life. Her performances, a blend of precision and passion, captivated audiences worldwide. Her brand, \"Pulse & Grace,\" embodied this dynamic interplay. Each piece of her collection told a story of movement and emotion. This season, Zara introduced a line of dancewear designed for both stage and street. Featuring fluid lines and breathable fabrics, these outfits provided the perfect balance of style and functionality. The collection's highlight was a series of asymmetrical tops and leggings, each reflecting the spontaneity of dance and the structured chaos of urban life. Zara's work transcended fashion, offering dancers a way to express their artistry both on and off the stage.",
+			"external_url": "<our url link to show the NFT in the glb viewer>",
+			"image_url": "<glb file uploaded to filecoin>",
+			"video_url": "<video file uploaded to filecoin>",
+			"name": "Pulse & Grace Zara Dancewear",
+			"locked_features": false,
+			"gender": "Female",
+			"attributes": [
+				{
+					"trait_type": "Animation",
+					"value": ["<animation_url_1>", "<animation_url_2>"]
+				}
+			]
+		}
+	]
+}
