@@ -6,7 +6,7 @@ export default function ExploreLayout({
   return (
     <div
       id="explore"
-      className="p-20 bg-gradient-radial from-accent to-secondary text-primary-dark dark:text-primary-light h-[100vh]"
+      className="flex flex-col min-h-screen p-20 bg-gradient-radial from-accent to-secondary text-primary-dark dark:text-primary-light"
     >
       {children}
     </div>
