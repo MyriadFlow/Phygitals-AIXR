@@ -20,12 +20,6 @@ export const Assistant = () => {
 		console.log(assistant)
 	}
 
-	useEffect(() => {
-		main()
-	}, [])
-
-	main()
-
 	// const thread = await openai.beta.threads.create()
 
 	// const message = await openai.beta.threads.messages.create(thread.id, {

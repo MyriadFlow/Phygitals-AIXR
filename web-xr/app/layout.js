@@ -1,12 +1,13 @@
 import { Inter as FontSans } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
+import Script from 'next/script'
 
 const fontSans = FontSans({ subsets: ['latin'] })
 
 export const metadata = {
-	title: 'TTS - STT Demo',
-	description: 'A pwa to test voices',
+	title: 'Nero Fs Phygitals',
+	description: 'Explore your phygitals in a mixed reality',
 }
 
 export default function RootLayout({ children }) {
@@ -14,7 +15,7 @@ export default function RootLayout({ children }) {
 		<html lang='en' suppressHydrationWarning>
 			<head>
 				<link rel='manifest' href='/manifest.json' />
-				<script src='https://aframe.io/releases/1.5.0/aframe.min.js'></script>
+				<Script src='https://aframe.io/releases/1.5.0/aframe.min.js'></Script>
 			</head>
 
 			<body

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '..'
+import { Button } from './button'
 import { Avatar } from '@readyplayerme/visage'
 
 export const AvatarContainer = ({ modelUrl, locked, attributes }) => {

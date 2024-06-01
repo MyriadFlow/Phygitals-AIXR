@@ -150,7 +150,7 @@ export default function Collection({ params }) {
 							{showAnimationList && (
 								<>
 									{modelAttributes?.value.map((animation, index) => (
-										<Button onClick={() => handleAnimation(index)}>
+										<Button onClick={() => handleAnimation(index)} key={index}>
 											Animation {index + 1}
 										</Button>
 									))}
