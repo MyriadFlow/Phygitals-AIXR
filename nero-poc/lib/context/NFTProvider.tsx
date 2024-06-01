@@ -1,9 +1,10 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NFTContext from './NFTContext';
 import useLitLibrary from '../hooks/useLitLibrary';
 import useWeb3Storage from '../hooks/useWeb3Storage';
 import useDeployContract from '../hooks/useDeployContract';
+import { useAccount, useAccountEffect } from 'wagmi';
 
 const NFTProvider = ({ children }: any) => {
   const [avatar, setAvatar] = useState<File>();
@@ -30,7 +31,7 @@ const NFTProvider = ({ children }: any) => {
   const [publicAgentKnowledge, setPublicAgentKnowledge] = useState<string>(`Lexi, renowned street dancer and fashion designer, had often surveyed her muse high above the city's pulsing heart. Below, a human kaleidoscope mirrored her own passion: cars streamed with the fluidity of a b-boy freeze, pedestrians weaved through the concrete jungle with practiced grace, and the distant thump of bass vibrated like a breaking beat. This urban symphony had always been her lifeblood, fueling "Concrete Rhythm," her thriving clothing brand. From the day she first defied gravity on cracked pavement, the city and her dance had intertwined. Every sharp turn inspired a bold graphic tee, every burst of color whispered the secrets of flowing movement in sweatpants. Now, this latest collection was the culmination of that fusion. It wasn't just clothes – it was a limited edition line of sneakers. Sleek, futuristic kicks built for conquering concrete battlegrounds, each step a statement. They embodied both the agility of Lexi's moves and the city's unwavering spirit. Lexi, the self-made artist who found her rhythm where concrete met movement, was about to unleash her masterpiece.`);
   const [privateAgentKnowledge, setPrivateAgentKnowledge] = useState<string>(`This is private data for Lexi!.`);
   const [tokenPrice, setTokenPrice] = useState(0);
-  const { encryptFile, encryptData, requestWeb3Storage } = useLitLibrary();
+  const { encryptFile, encryptData, requestWeb3Storage, disconnect } = useLitLibrary();
 
   const [bronzeLevel, setBronzeLevel] = useState(10);
   const [silverLevel, setSilverLevel] = useState(100);
@@ -141,7 +142,7 @@ const NFTProvider = ({ children }: any) => {
       update('5. updating all uri into smart contract and locking smart contract');
 
       const result = await updateContractMetadata(contractAddress!, avatarURI, backgroundURI, json.avatar.unlocked, json.avatar.unlockedBackground, json.knowledge.public, json.knowledge.private, metadataURI);
-      
+
       update('5.1. metadata updated with txn hash ' + result);
       update(' -- CONGRATS! YOUR NFT IS UPDATED --');
 
