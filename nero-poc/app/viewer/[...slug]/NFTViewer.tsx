@@ -59,6 +59,9 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
 
   const { decryptData, executeLitAction } = useLitLibrary();
 
+  const [publicAgentKnowledge, setPublicAgentKnowledge] = useState('');
+  const [privateAgentKnowledge, setPrivateAgentKnowledge] = useState('');
+
   const contracts = [
     {
       abi: nero.abi,
@@ -164,6 +167,12 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
       console.log(json);
       setMetadata(json);
       setModelSource(json.avatar.locked)
+
+      if (json.knowledge.public) {
+        const k = await fetch(json.knowledge.public);
+        const j = await k.text();
+        setPublicAgentKnowledge(j);
+      }
     });
 
 
@@ -360,12 +369,23 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
         <Typography variant='body1'>{metadata && metadata.description}</Typography>
         Owner - {results.data[10] as string}
         {supply}
-        {traits}
         <Box gap={3} display={"flex"} marginY={2}>
           <Button variant="contained" onClick={unlockAvatar} disabled={unlocking}>Unlock Token</Button>
-          <Button variant="contained" onClick={unlockKnowledge} disabled={unlocking}>Unlock Knowledge</Button>
         </Box>
-        {statusMessage}
+        {traits}
+        <Box gap={3} display={"flex"} marginY={2} flexDirection={"column"}>
+          <Box border={1} padding={2} boxShadow={1} borderRadius={1} borderColor={"lightgray"}>
+            <Typography variant='h6'>Public Data</Typography>
+            <Typography variant='body2'>{publicAgentKnowledge}</Typography>
+          </Box>
+          <Box border={1} padding={2} boxShadow={1} borderRadius={1} borderColor={"lightgray"}>
+            <Typography variant='h6'>Private Data</Typography>
+            <Typography variant="body2">{privateAgentKnowledge}</Typography>
+
+            <Button variant="contained" onClick={unlockKnowledge} disabled={unlocking}>Unlock Knowledge</Button>
+          </Box>
+        </Box>
+
       </Grid>
     </Grid>
   </Container>
