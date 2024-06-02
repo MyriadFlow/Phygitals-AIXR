@@ -9,6 +9,8 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@google/model-viewer": "^3.5.0",
+		"@lit-protocol/lit-node-client": "^5.1.0",
 		"@prisma/client": "^5.13.0",
 		"@radix-ui/react-slot": "^1.0.2",
 		"@rainbow-me/rainbowkit": "^2.1.2",
@@ -29,6 +31,7 @@
 		"react-dom": "^18",
 		"react-icons": "^5.2.1",
 		"react-speech-recognition": "^3.10.0",
+		"react-toastify": "^10.0.5",
 		"tailwind-merge": "^2.3.0",
 		"tailwindcss-animate": "^1.0.7",
 		"three": "^0.164.1",

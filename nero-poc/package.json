@@ -37,6 +37,7 @@
     "react-dom": "^18",
     "react-file-base64": "^1.0.3",
     "react-hook-form": "^7.51.5",
+    "three": "^0.165.0",
     "viem": "^2.12.5",
     "wagmi": "^2.9.7"
   },

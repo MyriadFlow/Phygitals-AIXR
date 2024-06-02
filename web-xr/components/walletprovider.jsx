@@ -1,15 +1,21 @@
 'use client'
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import { WagmiProvider } from 'wagmi'
-import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains'
+import {
+	mainnet,
+	polygon,
+	optimism,
+	arbitrum,
+	base,
+	sepolia,
+} from 'wagmi/chains'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-import '@rainbow-me/rainbowkit/styles.css'
 
 export const WalletProvider = ({ children }) => {
 	const config = getDefaultConfig({
 		appName: 'Nero',
 		projectId: 'nerofs',
-		chains: [mainnet, polygon, optimism, arbitrum, base],
+		chains: [mainnet, polygon, optimism, arbitrum, base, sepolia],
 		ssr: false, // If your dApp uses server side rendering (SSR)
 	})
 

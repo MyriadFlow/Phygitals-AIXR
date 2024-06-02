@@ -2,6 +2,7 @@ import { Inter as FontSans } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import Script from 'next/script'
+import '@rainbow-me/rainbowkit/styles.css'
 
 import { WalletProvider } from '@/components/walletprovider'
 
