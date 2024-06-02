@@ -16,7 +16,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-primary-dark text-primary-light p-4 flex justify-between items-center">
+    <header className="bg-background-dark text-primary-light p-4 flex justify-between items-center">
       <Link href="/">
         <div className="relative w-32 h-6 md:w-48 md:h-10">
           <Image
