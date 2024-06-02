@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAccount } from 'wagmi';
 import Image from 'next/image';
@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import SetupAvatar from '../ui/SetupAvatar';
 import { generateThumbnail } from '../utils/generateThumbnail';
+
+const NERO_URL = "https://nero-fs.netlify.app/";
 
 export default function Page() {
   const { address } = useAccount();
@@ -19,6 +21,8 @@ export default function Page() {
   const handleOnAvatarExported = (url: string) => {
     setGlbUrl(url);
   };
+
+  const downloadLinkRef = useRef<HTMLAnchorElement>(null);
 
   const handleCreateAvatar = async () => {
     if (!glbUrl || !address) return;
@@ -50,6 +54,13 @@ export default function Page() {
       setAvatar(data && data[0]);
     }
   }, [glbUrl, address]);
+
+  const handleDownloadGlb = () => {
+    if (downloadLinkRef.current && glbUrl) {
+      downloadLinkRef.current.href = glbUrl;
+      downloadLinkRef.current.click(); 
+    }
+  };
 
   return (
     <div className="flex flex-col items-center space-y-4">
@@ -93,32 +104,34 @@ export default function Page() {
           )}
         </button>
       </motion.div>
-      {avatar && (
+      
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center w-full max-w-lg p-4 bg-white rounded-lg shadow-lg"
         >
-          <h2 className="text-xl font-bold mb-2">Avatar Created</h2>
-          <Image
-            src={avatar.image_url}
-            alt="Avatar"
-            sizes="500px"
-            style={{ width: '100%', height: 'auto' }}
-            width={200}
-            height={200}
-            className="rounded-md mb-4"
-          />
-          <pre className="text-left bg-gray-100 p-2 rounded-md">{JSON.stringify(avatar.attributes, null, 2)}</pre>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="bg-primary-dark text-primary-light py-2 px-4 rounded mt-4"
-          >
-            Go to Dashboard
-          </button>
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={handleDownloadGlb}
+              disabled={!glbUrl}
+              className="bg-secondary text-primary-dark py-2 px-4 rounded mr-2 flex items-center"
+            >
+              Download GLB
+            </button>
+            <a href={NERO_URL} target="_blank" rel="noopener noreferrer">
+              <button
+                className="bg-primary-dark text-primary-light py-2 px-4 rounded"
+              >
+                Launch your collection
+              </button>
+            </a>
+          </div>
+          <a ref={downloadLinkRef} href={glbUrl} download="avatar.glb" style={{ display: 'none' }}>
+            Download
+          </a>
         </motion.div>
-      )}
+      
     </div>
   );
 }

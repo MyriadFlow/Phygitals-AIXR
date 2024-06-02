@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "../lib/supabaseClient";
 
 interface Avatar {
@@ -9,6 +10,8 @@ interface Avatar {
   image_url: string;
   attributes: Record<string, any>;
 }
+
+const NERO_NFT_URL = process.env.NEXT_NERO_NFT_URL || "";
 
 export default function Page() {
   const [avatars, setAvatars] = useState<Avatar[]>([]);
@@ -49,6 +52,11 @@ export default function Page() {
             <pre className="text-left bg-gray-100 p-2 rounded-md text-primary-dark">
               {JSON.stringify(avatar.attributes, null, 2)}
             </pre>
+            <Link href={NERO_NFT_URL} target={"_blank"}>
+            <button className="bg-primary-dark hover:bg-background-dark text-white font-bold py-2 px-4 rounded mt-4">
+              View Collection
+            </button>
+            </Link>
           </div>
         ))}
       </div>
