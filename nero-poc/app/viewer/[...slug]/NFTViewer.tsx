@@ -3,7 +3,7 @@ import nero from '@/lib/artifacts/contracts/Nero.sol/Nero.json';
 import { Box, Button, Card, CardContent, CircularProgress, Container, Grid, Typography } from '@mui/material';
 import { Hex, createPublicClient, decodeEventLog, http } from 'viem';
 import { sepolia } from 'viem/chains';
-import { useChainId, useReadContracts, useWalletClient } from "wagmi"
+import { useAccount, useAccountEffect, useChainId, useReadContracts, useWalletClient } from "wagmi"
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import Alert from '@mui/material/Alert';
@@ -255,138 +255,143 @@ export default function NFTViewer({ address, tokenId }: { address: Hex, tokenId?
     try {
       const result = await executeLitAction(address, code, { url: metadata.knowledge.private })
       console.log(result);
+      setPrivateAgentKnowledge(result.response.toString());
     }
-    finally {
-      setUnlocking(false);
+    catch (e: any) { 
+      setPrivateAgentKnowledge('FAILED TO UNLOCK ' + e.message);
+      console.log(e);
     }
-  }
+      finally {
+        setUnlocking(false);
+      }
+    }
 
-  const statusMessage = useMemo(() => {
-    if (buyStatus.status === 0) {
-      return <></>
-    }
-    if (buyStatus.status === 200) {
-      return <Box gap={3} display={"flex"} sx={{ flexDirection: "column" }}>
-        <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-          Successfully purchased the NFT {nftId} and should now be in your wallet.
-        </Alert>
-        <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
-          <Button color='success' variant='contained' onClick={() => window.open("https://sepolia.etherscan.io/tx/" + txnHash)}>View on Etherscan</Button>
-          <Button color='success' onClick={() => window.open(`/viewer/${address}/${nftId}`)}>View NFT</Button>
+    const statusMessage = useMemo(() => {
+      if (buyStatus.status === 0) {
+        return <></>
+      }
+      if (buyStatus.status === 200) {
+        return <Box gap={3} display={"flex"} sx={{ flexDirection: "column" }}>
+          <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+            Successfully purchased the NFT {nftId} and should now be in your wallet.
+          </Alert>
+          <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
+            <Button color='success' variant='contained' onClick={() => window.open("https://sepolia.etherscan.io/tx/" + txnHash)}>View on Etherscan</Button>
+            <Button color='success' onClick={() => window.open(`/viewer/${address}/${nftId}`)}>View NFT</Button>
+          </Box>
         </Box>
-      </Box>
-    }
-    return <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
-      <Alert icon={<CheckIcon fontSize="inherit" />} severity="error">
-        We had an issue minting your nft, the error was {buyStatus.message}
-      </Alert>
-    </Box>
-  }, [buyStatus])
-
-  const supply = useMemo(() => {
-    if (!results.data || results.isError) {
-      return <></>;
-    }
-    const minted = Number(results.data[1] as any);
-    const supply = Number(results.data[2] as any);
-
-    return <div className='py-2'><Typography variant="caption">Minted {minted} of {supply}</Typography></div>
-  }, [results])
-
-  const traits = useMemo(() => {
-    if (!metadata || !metadata.traits) {
-      return <></>;
-    }
-
-    return <Grid spacing={2} container>{metadata.traits.map((t: any) => (<Grid item xs={4} key={t.id}> <Card variant="elevation" key={t.id}>
-      <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {t.trait_type}
-        </Typography>
-        <Typography variant="body2">
-          {t.value}
-        </Typography>
-      </CardContent>
-    </Card>
-    </Grid>))}
-    </Grid>
-
-  }, [results])
-
-  if (!results.isFetched) {
-    return <Container maxWidth="lg">
-      <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
-        <CircularProgress />
-        <Typography>Loading</Typography>
-      </Box>
-    </Container>
-  }
-
-  if (!results.data || results.isError) {
-    return <Container maxWidth="lg">
-      <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
+      }
+      return <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
         <Alert icon={<CheckIcon fontSize="inherit" />} severity="error">
-          We were unable to load the NFT, please check the URL and try again
-          Error was {results.error?.message}
+          We had an issue minting your nft, the error was {buyStatus.message}
         </Alert>
       </Box>
-    </Container>
-  }
+    }, [buyStatus])
 
-  console.log('token id is', tokenId);
+    const supply = useMemo(() => {
+      if (!results.data || results.isError) {
+        return <></>;
+      }
+      const minted = Number(results.data[1] as any);
+      const supply = Number(results.data[2] as any);
 
-  if (tokenId !== 0 && !tokenId) {
+      return <div className='py-2'><Typography variant="caption">Minted {minted} of {supply}</Typography></div>
+    }, [results])
+
+    const traits = useMemo(() => {
+      if (!metadata || !metadata.traits) {
+        return <></>;
+      }
+
+      return <Grid spacing={2} container>{metadata.traits.map((t: any) => (<Grid item xs={4} key={t.id}> <Card variant="elevation" key={t.id}>
+        <CardContent>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            {t.trait_type}
+          </Typography>
+          <Typography variant="body2">
+            {t.value}
+          </Typography>
+        </CardContent>
+      </Card>
+      </Grid>))}
+      </Grid>
+
+    }, [results])
+
+    if (!results.isFetched) {
+      return <Container maxWidth="lg">
+        <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
+          <CircularProgress />
+          <Typography>Loading</Typography>
+        </Box>
+      </Container>
+    }
+
+    if (!results.data || results.isError) {
+      return <Container maxWidth="lg">
+        <Box gap={3} display={"flex"} sx={{ flexDirection: "row" }}>
+          <Alert icon={<CheckIcon fontSize="inherit" />} severity="error">
+            We were unable to load the NFT, please check the URL and try again
+            Error was {results.error?.message}
+          </Alert>
+        </Box>
+      </Container>
+    }
+
+    console.log('token id is', tokenId);
+
+    if (tokenId !== 0 && !tokenId) {
+
+      return <Container maxWidth="lg">
+        <w3m-button />
+        <Grid container>
+          <Grid item xs={6} height={"600px"}>
+
+            <Model src={modelSource} />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant='h4'>{results.data?.[3] as string}</Typography>
+            <Typography variant='body1'>{metadata && metadata.description}</Typography>
+            {supply}
+            {traits}
+            <Button variant="contained" onClick={buyNow} disabled={buying}>{buying ? "Minting a token!" : "Buy Now"}</Button>
+            {statusMessage}
+          </Grid>
+        </Grid>
+      </Container>
+    }
+
+    console.log(modelSource);
 
     return <Container maxWidth="lg">
       <w3m-button />
       <Grid container>
         <Grid item xs={6} height={"600px"}>
-
           <Model src={modelSource} />
         </Grid>
         <Grid item xs={6}>
-          <Typography variant='h4'>{results.data?.[3] as string}</Typography>
+          <Typography variant='h4'>{results.data?.[3] as string} # {tokenId}</Typography>
           <Typography variant='body1'>{metadata && metadata.description}</Typography>
+          Owner - {results.data[10] as string}
           {supply}
+          <Box gap={3} display={"flex"} marginY={2}>
+            <Button variant="contained" onClick={unlockAvatar} disabled={unlocking}>Unlock Token</Button>
+          </Box>
           {traits}
-          <Button variant="contained" onClick={buyNow} disabled={buying}>{buying ? "Minting a token!" : "Buy Now"}</Button>
-          {statusMessage}
+          <Box gap={3} display={"flex"} marginY={2} flexDirection={"column"}>
+            <Box border={1} padding={2} boxShadow={1} borderRadius={1} borderColor={"lightgray"}>
+              <Typography variant='h6'>Public Data</Typography>
+              <Typography variant='body2'>{publicAgentKnowledge}</Typography>
+            </Box>
+            <Box border={1} padding={2} boxShadow={1} borderRadius={1} borderColor={"lightgray"}>
+              <Typography variant='h6'>Private Data</Typography>
+              <Typography variant="body2">{privateAgentKnowledge}</Typography>
+
+              <Button variant="contained" onClick={unlockKnowledge} disabled={unlocking}>Unlock Knowledge</Button>
+            </Box>
+          </Box>
+
         </Grid>
       </Grid>
     </Container>
   }
-
-  console.log(modelSource);
-
-  return <Container maxWidth="lg">
-    <w3m-button />
-    <Grid container>
-      <Grid item xs={6} height={"600px"}>
-        <Model src={modelSource} />
-      </Grid>
-      <Grid item xs={6}>
-        <Typography variant='h4'>{results.data?.[3] as string} # {tokenId}</Typography>
-        <Typography variant='body1'>{metadata && metadata.description}</Typography>
-        Owner - {results.data[10] as string}
-        {supply}
-        <Box gap={3} display={"flex"} marginY={2}>
-          <Button variant="contained" onClick={unlockAvatar} disabled={unlocking}>Unlock Token</Button>
-        </Box>
-        {traits}
-        <Box gap={3} display={"flex"} marginY={2} flexDirection={"column"}>
-          <Box border={1} padding={2} boxShadow={1} borderRadius={1} borderColor={"lightgray"}>
-            <Typography variant='h6'>Public Data</Typography>
-            <Typography variant='body2'>{publicAgentKnowledge}</Typography>
-          </Box>
-          <Box border={1} padding={2} boxShadow={1} borderRadius={1} borderColor={"lightgray"}>
-            <Typography variant='h6'>Private Data</Typography>
-            <Typography variant="body2">{privateAgentKnowledge}</Typography>
-
-            <Button variant="contained" onClick={unlockKnowledge} disabled={unlocking}>Unlock Knowledge</Button>
-          </Box>
-        </Box>
-
-      </Grid>
-    </Grid>
-  </Container>
-}
