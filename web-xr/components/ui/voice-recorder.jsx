@@ -1,4 +1,5 @@
 'use client'
+import { Speech } from '@/utils/speechSynthesis'
 import { useState, useRef } from 'react'
 import {
 	FaMicrophoneAltSlash,
@@ -71,20 +72,24 @@ export const VoiceRecorder = () => {
 	const stopRecording = () => {
 		setRecordingStatus('inactive')
 
-		//stops the recording instance
-		mediaRecorder.current.stop()
-		mediaRecorder.current.onstop = () => {
-			//creates a blob file from the audiochunks data
-			const audioBlob = new Blob(audioChunks, { type: mimeType })
-			//creates a playable URL from the blob file
+		setTimeout(() => {
+			Speech('')
+		}, 6000)
 
-			const audioUrl = URL.createObjectURL(audioBlob)
+		// //stops the recording instance
+		// mediaRecorder.current.stop()
+		// mediaRecorder.current.onstop = () => {
+		// 	//creates a blob file from the audiochunks data
+		// 	const audioBlob = new Blob(audioChunks, { type: mimeType })
+		// 	//creates a playable URL from the blob file
 
-			sendFile(audioUrl.slice(5))
+		// 	const audioUrl = URL.createObjectURL(audioBlob)
 
-			setAudio(audioUrl)
-			setAudioChunks([])
-		}
+		// 	sendFile(audioUrl.slice(5))
+
+		// 	setAudio(audioUrl)
+		// 	setAudioChunks([])
+		// }
 	}
 
 	const displayText = async () => {
@@ -126,19 +131,22 @@ export const VoiceRecorder = () => {
 	}
 
 	return (
-		<div className='w-80 h-10 bg-slate-950 text-white border-white border rounded-full flex justify-center p-8'>
+		<div className=' w-80 h-10 bg-slate-950 text-white border-white border rounded-full flex flex-col justify-center p-8'>
+			{recordingStatus === 'recording' && <p>listening...</p>}
+
 			{!permission ? (
 				<div onClick={connectMicrophone}>
 					<FaMicrophoneAltSlash color='white' />
 				</div>
 			) : (
-				<div className='flex gap-4'>
-					<div onClick={startRecording}>
-						<FaMicrophoneAlt color='white' />
-					</div>
-
-					<div onClick={stopRecording}>
-						<FaStop color='white' />
+				<div>
+					<div className='flex w-full justify-center gap-4'>
+						<div onClick={startRecording}>
+							<FaMicrophoneAlt color='white' />
+						</div>
+						<div onClick={stopRecording}>
+							<FaStop color='white' />
+						</div>
 					</div>
 				</div>
 			)}

@@ -419,10 +419,6 @@ export default function Collection({ params }) {
 		)
 	}
 
-	// console.log(modelSource)
-	console.log(metadata)
-	console.log(metadata?.name)
-
 	return (
 		<main className='relative min-h-screen'>
 			<ToastContainer position='top-right' autoClose={5000} />
@@ -438,7 +434,7 @@ export default function Collection({ params }) {
 							<video
 								id='video'
 								preload='auto'
-								src={'/webxr-assets/videos/sneakers-unlocked.mp4'}
+								src='/webxr-assets/videos/sneakers-unlocked.mp4'
 								loop={true}
 								crossOrigin='anonymous'
 								muted
@@ -458,18 +454,32 @@ export default function Collection({ params }) {
 				<div className='h-[30vh] w-[30%] p-2 absolute top-0 right-5 rounded-md'>
 					<Card className='card text-white'>
 						<CardHeader>
-							<CardTitle>{metadata?.name}</CardTitle>
+							<CardTitle>Silver Spark Sneakers</CardTitle>
 							<CardDescription className='text-ellipsis text-white'>
-								{metadata?.description.slice(0, 50)}
+								Description: Imagine sleek, futuristic kicks built for
+								conquering concrete battlegrounds. Each step a statement, these
+								silver sneakers are crafted with premium materials and
+								cutting-edge design.
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							{metadata?.traits?.map((trait) => (
-								<div className='flex gap-3 items-center' key={trait?.id}>
-									<VscDebugBreakpointLogUnverified />
-									<p>{trait?.trait_type + ' - ' + trait?.value}</p>
-								</div>
-							))}
+							<div className='flex gap-3 items-center'>
+								<VscDebugBreakpointLogUnverified />
+								<p>Designer - Lexi</p>
+							</div>
+							<div className='flex gap-3 items-center'>
+								<VscDebugBreakpointLogUnverified />
+								<p>Manufacturer - Concrete Rhythm</p>
+							</div>
+							<div className='flex gap-3 items-center'>
+								<VscDebugBreakpointLogUnverified />
+								<p>Sizes - From 5-11 UK size for women and men</p>
+							</div>
+
+							<p className='mt-4'>
+								Highly exclusive Silver Spark Sneakers from Urban Pulse Limited
+								Edition NFT Collection by Concrete Rhythm
+							</p>
 						</CardContent>
 					</Card>
 				</div>
@@ -621,7 +631,9 @@ export default function Collection({ params }) {
 				/> */}
 			</div>
 			<div className='absolute bottom-12 left-[30%]'>
-				<p className='text-center font-bold '>Click on the mic icon to speak</p>
+				<p className='text-center font-bold text-white'>
+					Click on the mic icon to speak
+				</p>
 				<VoiceRecorder />
 			</div>
 		</main>
