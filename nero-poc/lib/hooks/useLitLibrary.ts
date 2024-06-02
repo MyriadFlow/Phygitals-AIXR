@@ -53,38 +53,44 @@ export default function useLitLibrary() {
   }
 
   async function executeLitAction(contractAddress: string, code: string, args?: any) {
-    let litNodeClient = client;
+    LitJsSdk.disconnectWeb3(); // clear any sessions
+    let litNodeClient = new LitJsSdk.LitNodeClient({
+      alertWhenUnauthorized: false,
+      litNetwork: LitNetwork.Cayenne,
+      debug: true
+    });
 
-    if (!litNodeClient) {
-      litNodeClient = await getLitNodeClient();
-    }
+    await litNodeClient.connect();
+    let sig = await connect();
 
-
-    let sig = authSig;
-    if (!sig) {
-      sig = await connect();
-    }
-    const accessControlConditions = getAccessControlConditions(contractAddress);
-
-    console.log(args);
-
-    const res = await litNodeClient.executeJs({
-      code,
-      sessionSigs: await genSession(litNodeClient, [{
+    const sessionSigs = await genSession(litNodeClient, [
+      {
         resource: new LitActionResource('*'),
         ability: LitAbility.LitActionExecution,
       },
       {
         resource: new LitAccessControlConditionResource('*'),
         ability: LitAbility.AccessControlConditionDecryption,
-      }]), // your session
-      jsParams: {
+      }
+    ]);
+    const accessControlConditions = getAccessControlConditions(contractAddress);
+
+    console.log(args);
+
+    const res = await litNodeClient.executeJs({
+      code,
+      sessionSigs: sessionSigs, // your session
+            jsParams: {
         accessControlConditions,
+        sessionSigs,
+        authSig: sig,
         ...args
       }
     });
 
     console.log("Execute JS success", res);
+
+    return res;
   }
 
   async function getLitNodeClient() {
@@ -380,7 +386,8 @@ export default function useLitLibrary() {
     decryptData,
     executeLitAction,
     testEnc,
-    requestWeb3Storage
+    requestWeb3Storage,
+    disconnect : () => LitJsSdk.disconnectWeb3()
   }
 
 }

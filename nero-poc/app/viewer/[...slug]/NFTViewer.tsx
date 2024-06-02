@@ -12,7 +12,13 @@ import {
 } from '@mui/material'
 import { Hex, createPublicClient, decodeEventLog, http } from 'viem'
 import { sepolia } from 'viem/chains'
-import { useChainId, useReadContracts, useWalletClient } from 'wagmi'
+import {
+	useAccount,
+	useAccountEffect,
+	useChainId,
+	useReadContracts,
+	useWalletClient,
+} from 'wagmi'
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useState } from 'react'
 import Alert from '@mui/material/Alert'
